@@ -933,6 +933,36 @@
     .splash.hide{ transition:none !important; }
   }
 
+
+    .app-actions{
+      margin-top: 10px;
+      display:flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      position: relative;
+      z-index: 2;
+    }
+    .join-btn{
+      appearance:none;
+      border: 1px solid rgba(77,48,105,.22);
+      background: linear-gradient(135deg, rgba(77,48,105,.92), rgba(36,73,110,.92));
+      color: #fff;
+      border-radius: 14px;
+      padding: 10px 10px;
+      cursor:pointer;
+      font-weight: 800;
+      font-size: 12px;
+      display:inline-flex;
+      align-items:center;
+      gap: 8px;
+      text-decoration:none;
+      box-shadow: 0 14px 30px rgba(77,48,105,.18);
+      transition: transform .15s ease, filter .2s ease;
+    }
+    .join-btn:hover{ transform: translateY(-1px); filter: brightness(1.03); }
+    .join-btn:active{ transform: translateY(0); }
+    .join-btn i{ width: 18px; height: 18px; }
+
 </style>
 </head>
 
@@ -1226,6 +1256,9 @@
         desc: "Emprendimientos y difusión.", tags: ["Feria","Emprender"] },
       { name: "Catálogo Formación", url: "https://docentesbrown-oficial.github.io/Catalago.Formacion.Profesional/", icon: "book-open",
         desc: "Oferta de formación profesional.", tags: ["Catálogo","FP"] },
+      { name: "Meet: Ventanilla Virtual", url: "https://meet.google.com/jen-ymff-kku", icon: "video",
+        desc: "Martes 12:00–13:00 · Ventanilla Virtual (Google Meet).", tags: ["Meet","Nodal"] }
+    
     ];
 
     const $ = (sel, root=document) => root.querySelector(sel);
@@ -1413,19 +1446,51 @@
             </div>
             <div class="tagrow">
               ${(app.tags||[]).slice(0,3).map(t => `<span class="tag">${escapeHtml(t)}</span>`).join("")}
-            </div>
+  
+            ${app.url && app.url.includes("meet.google.com") ? `
+              <div class="app-actions">
+                <a class="join-btn" href="${escapeHtml(app.url)}" target="_blank" rel="noopener noreferrer" aria-label="Unirse a ${escapeHtml(app.name)}">
+                  <i data-lucide="video"></i> Unirse
+                </a>
+                <span class="tag" style="background:rgba(243,239,220,.6);border-color:rgba(190,127,79,.35);">
+                  Martes 12:00–13:00 hs
+                </span>
+              </div>
+            ` : ``}
+          </div>
+
+            
           </div>
         </div>
       `).join("");
 
       $$(".app-card").forEach(card=>{
-        card.addEventListener("click", ()=> openApp(card.dataset.appName, card.dataset.appUrl, card.dataset.appIcon));
-        card.addEventListener("keydown", (e)=>{
+        card.addEventListener("click", ()=> {
+          const url = card.dataset.appUrl || "";
+          if(url.includes("meet.google.com")){
+            window.open(url, "_blank", "noopener,noreferrer");
+            toast("Abriendo Meet…");
+            return;
+          }
+          openApp(card.dataset.appName, url, card.dataset.appIcon);
+        });
+card.addEventListener("keydown", (e)=>{
           if(e.key === "Enter" || e.key === " "){
             e.preventDefault();
-            openApp(card.dataset.appName, card.dataset.appUrl, card.dataset.appIcon);
-          }
+            const url = card.dataset.appUrl || "";
+            if(url.includes("meet.google.com")){
+              window.open(url, "_blank", "noopener,noreferrer");
+              toast("Abriendo Meet…");
+              return;
+            }
+            openApp(card.dataset.appName, url, card.dataset.appIcon);
+}
         });
+
+      $$(".join-btn").forEach(btn=>{
+        btn.addEventListener("click", (e)=>{ e.stopPropagation(); });
+        btn.addEventListener("keydown", (e)=>{ e.stopPropagation(); });
+      });
       });
     }
 
