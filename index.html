@@ -163,9 +163,30 @@
     .icon-btn:active{ transform: translateY(0px); }
     .icon-btn span{ font-size: 12px; font-weight: 650; letter-spacing:.02em; }
 
+    /* Topbar actions: icon-only (concise) */
+    .top-actions .icon-btn{
+      width: 44px;
+      height: 44px;
+      padding: 0;
+      border-radius: 16px;
+      justify-content: center;
+      gap: 0;
+    }
+    .top-actions .icon-btn span{ display:none; }
+    .top-actions .icon-btn i{
+      width: 20px;
+      height: 20px;
+    }
+
+    /* On very small screens keep them tidy */
+    @media (max-width: 560px){
+      .top-actions{ justify-content: flex-start; }
+      .top-actions .icon-btn{ width: 44px; height: 44px; }
+    }
+
     .hero{
-      margin-top: 14px;
-      padding: 16px 16px;
+      margin-top: 18px;
+      padding: 22px 18px;
       border-radius: var(--radius-lg);
       background: linear-gradient(180deg, rgba(255,255,255,.62), rgba(255,255,255,.42));
       border: 1px solid rgba(36,73,110,.14);
@@ -189,10 +210,14 @@
     .hero-inner{
       position: relative;
       display:grid;
-      grid-template-columns: 1fr;
+      grid-template-columns: 1.2fr .8fr;
       gap: 18px;
       align-items: start;
     }
+    @media (max-width: 900px){
+      .hero-inner{ grid-template-columns: 1fr; }
+    }
+
     .hero h2{
       margin: 0 0 8px;
       font-size: clamp(22px, 3.2vw, 34px);
@@ -251,12 +276,7 @@
     }
     .pill strong{ color: var(--purple); }
 
-    .section{ margin-top: 10px; }
-    .section-inner{
-      max-width: 520px;
-      margin: 0 auto;
-      padding: 0 12px;
-    }
+    .section{ margin-top: 18px; }
     .section-header{
       display:flex;
       align-items:end;
@@ -664,246 +684,7 @@
       .bg-sheen, .cafecito-badge{ animation:none !important; }
       .btn, .icon-btn, .app-card{ transition:none !important; }
     }
-  
-    /* ================== MOBILE OPTIMIZATION ================== */
-    @media (max-width: 768px){
-
-      .wrap{
-        padding: 16px 12px 120px;
-      }
-
-      .topbar{
-        flex-direction: column;
-        align-items: stretch;
-        gap: 10px;
-      }
-
-      .brand{
-        justify-content: center;
-      }
-
-      .top-actions{
-        justify-content: center;
-        gap: 8px;
-      }
-
-      .icon-btn{
-        padding: 8px 10px;
-        font-size: 12px;
-      }
-
-      .hero{
-        padding: 18px 14px;
-      }
-
-      .hero h2{
-        text-align: center;
-        font-size: 22px;
-      }
-
-      .hero p{
-        text-align: center;
-        font-size: 13.5px;
-      }
-
-      .hero-inner{
-        gap: 14px;
-      }
-
-      .section-header{
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 4px;
-      }
-
-      .news-title{
-        font-size: 14px;
-      }
-
-      .news-text{
-        font-size: 13px;
-      }
-
-      .apps-grid{
-        grid-template-columns: 1fr;
-      }
-
-      .app-card{
-        padding: 12px;
-      }
-
-      .app-icon{
-        width:38px;
-        height:38px;
-      }
-
-      .app-title{
-        font-size: 13.5px;
-      }
-
-      .app-sub{
-        font-size: 12px;
-      }
-
-      .modal{
-        width:100%;
-        height:100%;
-        max-height:100%;
-        border-radius: 0;
-      }
-
-      .modal-body{
-        height: calc(100vh - 56px);
-      }
-
-      .modal-header{
-        padding: 10px;
-      }
-
-      .cafecito{
-        left: 12px;
-        right: 12px;
-        width: auto;
-        bottom: 12px;
-      }
-
-      .footer{
-        flex-direction: column;
-        text-align: center;
-        gap: 6px;
-      }
-    }
-
-    /* Extra small phones */
-    @media (max-width: 420px){
-
-      .icon-btn span{
-        display:none;
-      }
-
-      .icon-btn{
-        padding: 8px;
-        border-radius: 12px;
-      }
-
-      .hero h2{
-        font-size: 20px;
-      }
-
-      .hero p{
-        font-size: 13px;
-      }
-
-      .cafecito h4{
-        font-size: 12.5px;
-      }
-
-      .cafecito p{
-        font-size: 12px;
-      }
-    }
-    /* ========================================================= */
-
-  
-    
-      .topbar{ flex-direction: column; align-items: stretch; gap: 10px; }
-      .brand{ justify-content: flex-start; }
-      .top-actions{ justify-content: space-between; }
-      .icon-btn{ flex: 1 1 auto; justify-content: center; padding: 12px 12px; border-radius: 16px; }
-      .hero{ padding: 18px 14px; border-radius: 24px; }
-      .section-header{ flex-direction: column; align-items: flex-start; gap: 6px; }
-      .apps-grid{ gap: 10px; }
-      .app-card{ padding: 12px; }
-      .app-icon{ width:40px; height:40px; border-radius: 15px; }
-      .modal{ border-radius: 22px; width: 96vw; }
-      .modal-header{ padding: 10px 10px; flex-direction: column; align-items: stretch; gap: 10px; }
-      .modal-actions{ width: 100%; justify-content: space-between; }
-      .btn{ padding: 12px 12px; border-radius: 16px; }
-      .modal-body{ height: 76vh; }
-      .cafecito{ left: 12px; right: 12px; bottom: 12px; width: auto; border-radius: 22px; }
-      .toast{ bottom: 92px; }
-    }
-
-  
-    
-    
-    /* Mobile tune v4 - centered, consistent gutters (no edge-to-edge sections) */
-    @media (max-width: 560px){
-      .wrap{
-        padding: 14px 14px 120px; /* consistent side gutters */
-        max-width: 520px;
-      }
-
-      .topbar{
-        flex-direction: column;
-        align-items: stretch;
-        gap: 10px;
-        padding: 8px 0 0;
-      }
-
-      .top-actions{
-        justify-content: flex-start;
-        gap: 8px;
-      }
-      .icon-btn{
-        flex: 0 0 auto;
-        justify-content: center;
-        padding: 10px 12px;
-        border-radius: 16px;
-      }
-
-      .hero{
-        padding: 16px 14px;
-        border-radius: 24px;
-      }
-      .hero-inner{ gap: 10px; }
-
-      .section-header{
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 6px;
-        margin: 14px 2px 10px; /* less “wide” feel */
-      }
-
-      .news-grid{ gap: 10px; }
-      .apps-grid{ gap: 10px; }
-      .app-card{ padding: 12px; }
-      .app-icon{ width:40px; height:40px; border-radius: 15px; }
-
-      /* Modal: inset */
-      .modal{ border-radius: 22px; width: calc(100vw - 24px); }
-      .modal-header{
-        padding: 10px 10px;
-        flex-direction: column;
-        align-items: stretch;
-        gap: 10px;
-      }
-      .modal-actions{
-        width: 100%;
-        justify-content: space-between;
-      }
-      .btn{
-        padding: 11px 12px;
-        border-radius: 16px;
-      }
-      .modal-body{ height: 76vh; }
-
-      /* Cafecito: centered card, not full width */
-      .cafecito{
-        left: 50%;
-        right: auto;
-        transform: translateX(-50%);
-        bottom: 12px;
-        width: min(380px, calc(100vw - 28px));
-        border-radius: 22px;
-      }
-      .toast{ bottom: 92px; }
-
-      /* Reduce visual density a touch */
-      .card-body{ padding: 12px 12px 10px; }
-      .news-text{ -webkit-line-clamp: 5; }
-    }
-</style>
+  </style>
 </head>
 
 <body>
@@ -925,12 +706,12 @@
       </div>
 
       <div class="top-actions">
-        <a class="icon-btn" href="https://www.instagram.com/docentesbrown?igsh=c3o4cDR6cHVpZ3E1" target="_blank" rel="noopener noreferrer" title="Instagram @docentesbrown">
+        <a class="icon-btn" href="https://www.instagram.com/docentesbrown?igsh=c3o4cDR6cHVpZ3E1" target="_blank" rel="noopener noreferrer" title="Instagram @docentesbrown" aria-label="Instagram">
           <i data-lucide="instagram"></i>
           <span>Instagram</span>
         </a>
 
-        <a class="icon-btn" href="https://cafecito.app/docentesbrown" target="_blank" rel="noopener noreferrer" title="Cafecito Docentes Brown">
+        <a class="icon-btn" href="https://cafecito.app/docentesbrown" target="_blank" rel="noopener noreferrer" title="Cafecito Docentes Brown" aria-label="Cafecito">
           <i data-lucide="coffee"></i>
           <span>Cafecito</span>
         </a>
@@ -962,9 +743,23 @@
             defendiendo la educación pública con recursos de calidad.
           </p>
         </div>
-</div>
-            </div>
-    </div>
+
+        <div class="hero-side">
+          <div class="search" role="search" aria-label="Buscador de apps">
+            <i data-lucide="search"></i>
+            <input id="appSearch" type="text" placeholder="Buscar herramientas… (ej: Calculadora, Talleres, Concursos)" autocomplete="off" />
+            <button class="btn" id="clearSearchBtn" type="button" title="Limpiar">
+              <i data-lucide="x"></i> Limpiar
+            </button>
+          </div>
+
+          <div class="meta">
+            <div class="pill"><i data-lucide="sparkles"></i> Estilo <strong>iOS / Glass</strong></div>
+            <div class="pill"><i data-lucide="zap"></i> SPA <strong>sin salir</strong> de la página</div>
+            <div class="pill"><i data-lucide="newspaper"></i> Novedades <strong>con Admin</strong></div>
+          </div>
+        </div>
+      </div>
     </section>
 
     <section class="section" aria-label="Novedades">
@@ -975,8 +770,8 @@
         </div>
         <small>Tip: Login admin con <span class="kbd">Ctrl/⌘</span> + <span class="kbd">Shift</span> + <span class="kbd">B</span></small>
       </div>
-      <div class="section-inner">
-        <div class="news-grid" id="newsList"></div>
+
+      <div class="news-grid" id="newsList"></div>
     </section>
 
     <section class="section" aria-label="Dashboard">
@@ -987,10 +782,8 @@
         </div>
         <small id="appsCount"></small>
       </div>
-      <div class="section-inner">
-        <div class="apps-grid" id="appsGrid">      </div>
 
-      </div>
+      <div class="apps-grid" id="appsGrid"></div>
 
       <div class="footer">
         <div>
@@ -999,7 +792,7 @@
             @docentesbrown
           </a>
         </div>
-        <div>Atajos: <span class="kbd">Esc</span> cerrar · <span class="kbd">Ctrl/⌘</span> + <span class="kbd">Shift</span> + <span class="kbd">B</span> admin</div>
+        <div>Atajos: <span class="kbd">Esc</span> cerrar · <span class="kbd">Ctrl/⌘</span> + <span class="kbd">K</span> buscar · <span class="kbd">Ctrl/⌘</span> + <span class="kbd">Shift</span> + <span class="kbd">B</span> admin</div>
       </div>
     </section>
   </div>
@@ -1069,7 +862,7 @@
               <div>
                 <div style="font-weight:850;color:rgba(19,34,53,.86);margin-bottom:6px;">Accesos rápidos</div>
                 <div style="display:flex;flex-direction:column;gap:8px;font-size:13px;color:rgba(19,34,53,.72);">
-                  <div>🔎 </div>
+                  <div>🔎 Buscar apps: <span class="kbd">Ctrl/⌘</span> + <span class="kbd">K</span></div>
                   <div>🛡️ Admin noticias: <span class="kbd">Ctrl/⌘</span> + <span class="kbd">Shift</span> + <span class="kbd">B</span></div>
                   <div>❌ Cerrar modales: <span class="kbd">Esc</span></div>
                 </div>
@@ -1549,7 +1342,12 @@
       $("#helpBtn").addEventListener("click", ()=> showOverlay($("#helpOverlay")));
       $("#closeHelpBtn").addEventListener("click", ()=> hideOverlay($("#helpOverlay")));
       $("#helpOverlay").addEventListener("click", (e)=>{ if(e.target === $("#helpOverlay")) hideOverlay($("#helpOverlay")); });
-document.addEventListener("keydown", (e)=>{
+
+      const input = $("#appSearch");
+      input.addEventListener("input", ()=> renderApps(input.value));
+      $("#clearSearchBtn").addEventListener("click", ()=>{ input.value = ""; renderApps(""); input.focus(); });
+
+      document.addEventListener("keydown", (e)=>{
         if(e.key === "Escape"){
           if($("#appOverlay").classList.contains("show")) return closeApp();
           if($("#adminOverlay").classList.contains("show")) return hideOverlay($("#adminOverlay"));
@@ -1559,7 +1357,7 @@ document.addEventListener("keydown", (e)=>{
         const k = e.key.toLowerCase();
         const cmd = e.metaKey || e.ctrlKey;
 
-        
+        if(cmd && k === "k"){ e.preventDefault(); $("#appSearch").focus(); toast("Buscar herramientas"); }
         if(cmd && e.shiftKey && k === "b"){ e.preventDefault(); renderAdmin(); showOverlay($("#adminOverlay")); toast("Admin"); }
       });
 
