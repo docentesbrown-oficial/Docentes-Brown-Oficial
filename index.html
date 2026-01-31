@@ -14,7 +14,7 @@
   <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
 
   <!-- Lucide Icons -->
-  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://unpkg.com/lucide@latest" defer></script>
 
   <style>
     :root{
@@ -823,12 +823,6 @@
           <span>WhatsApp</span>
         </a>
 
-
-<button class="icon-btn" id="adminBtn" title="Admin (Ctrl/⌘ + Shift + B)" aria-label="Abrir login admin">
-          <i data-lucide="shield"></i>
-          <span>Admin</span>
-        </button>
-
         <button class="icon-btn" id="helpBtn" title="Atajos">
           <i data-lucide="keyboard"></i>
           <span>Atajos</span>
@@ -1201,7 +1195,6 @@
             </div>
           </div>
         `;
-        lucide.createIcons();
         return;
       }
 
@@ -1220,9 +1213,7 @@
           </div>
         </article>
       `).join("");
-
-      lucide.createIcons();
-    }
+      }
 
     function renderApps(filter=""){
       const grid = $("#appsGrid");
@@ -1262,8 +1253,6 @@
         </div>
       `).join("");
 
-      lucide.createIcons();
-
       $$(".app-card").forEach(card=>{
         card.addEventListener("click", ()=> openApp(card.dataset.appName, card.dataset.appUrl, card.dataset.appIcon));
         card.addEventListener("keydown", (e)=>{
@@ -1285,7 +1274,7 @@
       if(btn) btn.href = url || "#";
       if(skel) skel.style.display = "none";
       if(fb) fb.style.display = "flex";
-      lucide.createIcons();
+      if (window.lucide?.createIcons) lucide.createIcons();
     }
     function hideFrameFallback(){
       const fb = document.getElementById("frameFallback");
@@ -1310,7 +1299,7 @@
 
       const iconWrap = $("#modalIcon");
       iconWrap.innerHTML = `<i data-lucide="${icon || "app-window"}"></i>`;
-      lucide.createIcons();
+      if (window.lucide?.createIcons) lucide.createIcons();
       showOverlay($("#appOverlay"));
       toast("Abriendo: " + name);
 
@@ -1377,7 +1366,7 @@
           </div>
         `;
 
-        lucide.createIcons();
+        if (window.lucide?.createIcons) lucide.createIcons();
         $("#adminLoginBtn").addEventListener("click", handleAdminLogin);
         $("#adminPass").addEventListener("keydown", (e)=>{ if(e.key==="Enter") handleAdminLogin(); });
         setTimeout(()=> $("#adminUser")?.focus(), 50);
@@ -1429,7 +1418,7 @@
         </div>
       `;
 
-      lucide.createIcons();
+      if (window.lucide?.createIcons) lucide.createIcons();
 
       const today = new Date();
       const yyyy = today.getFullYear();
@@ -1552,8 +1541,8 @@
 $("#openNewTabBtn").addEventListener("click", ()=>{
         if(currentAppUrl) window.open(currentAppUrl, "_blank", "noopener,noreferrer");
       });
-
-      $("#adminBtn").addEventListener("click", ()=>{ renderAdmin(); showOverlay($("#adminOverlay")); });
+      const adminBtn = document.getElementById("adminBtn");
+      if (adminBtn) adminBtn.addEventListener("click", ()=>{ renderAdmin(); showOverlay($("#adminOverlay")); });
       $("#closeAdminBtn").addEventListener("click", ()=> hideOverlay($("#adminOverlay")));
       $("#adminOverlay").addEventListener("click", (e)=>{ if(e.target === $("#adminOverlay")) hideOverlay($("#adminOverlay")); });
 
@@ -1570,7 +1559,7 @@ $("#openNewTabBtn").addEventListener("click", ()=>{
 
         const k = e.key.toLowerCase();
         const cmd = e.metaKey || e.ctrlKey;
-if(cmd && e.shiftKey && k === "b"){ e.preventDefault(); renderAdmin(); showOverlay($("#adminOverlay")); toast("Admin"); }
+// acceso admin por teclado eliminado
       });
 
       $("#cafecitoClose").addEventListener("click", ()=>{
@@ -1585,10 +1574,31 @@ if(cmd && e.shiftKey && k === "b"){ e.preventDefault(); renderAdmin(); showOverl
       });
     }
 
-    async function boot(){ await renderNews(); renderApps(""); syncCafecito(); lucide.createIcons(); registerSW(); }
+    async function boot(){ await renderNews(); renderApps(""); syncCafecito(); if (window.lucide?.createIcons) lucide.createIcons(); registerSW(); }
 
-    bindEvents();
-    boot();
+    function start(){
+      bindEvents();
+      boot();
+    }
+
+    // Ensure DOM is ready and Lucide (icons) is available when using deferred loading.
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", () => {
+        // Wait a tick for deferred scripts
+        let tries = 0;
+        const t = setInterval(() => {
+          tries++;
+          if (window.lucide || tries > 200) { // ~2s max
+            clearInterval(t);
+            start();
+          }
+        }, 10);
+      });
+    } else {
+      // DOM already parsed
+      start();
+    }
+
   </script>
 </body>
 </html>
