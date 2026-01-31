@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Docentes Brown · Súper App Maestra</title>
 
+  <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+
   <!-- PWA / Icons -->
   <link rel="manifest" href="manifest.webmanifest">
   <meta name="theme-color" content="#24496e">
@@ -114,7 +116,8 @@
       letter-spacing:.08em;
       text-transform:uppercase;
       color: rgba(19,34,53,.75);
-      font-weight: 700;
+      font-weight: 800;
+      font-family: "League Spartan", var(--font);
     }
     .chip{
       margin-top: 2px;
@@ -1081,15 +1084,15 @@
              aria-label="Abrir ${escapeHtml(app.name)}">
           <div class="card-body">
             <div class="app-head">
-              <div style="display:flex;align-items:center;gap:12px;">
-                <div class="app-icon">
+              <div class="app-main">
+                <h4 class="app-title">${escapeHtml(app.name)}</h4>
+                <p class="app-sub">${escapeHtml(app.desc)}</p>
+
+                <div class="app-icon bottom">
                   <i data-lucide="${escapeHtml(app.icon)}"></i>
                 </div>
-                <div>
-                  <h4 class="app-title">${escapeHtml(app.name)}</h4>
-                  <p class="app-sub">${escapeHtml(app.desc)}</p>
-                </div>
               </div>
+
               <div class="app-arrow">
                 <i data-lucide="chevron-right"></i>
               </div>
