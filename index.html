@@ -663,6 +663,168 @@
       .bg-sheen, .cafecito-badge{ animation:none !important; }
       .btn, .icon-btn, .app-card{ transition:none !important; }
     }
+  
+    /* ================== MOBILE OPTIMIZATION ================== */
+    @media (max-width: 768px){
+
+      .wrap{
+        padding: 16px 12px 120px;
+      }
+
+      .topbar{
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+      }
+
+      .brand{
+        justify-content: center;
+      }
+
+      .top-actions{
+        justify-content: center;
+        gap: 8px;
+      }
+
+      .icon-btn{
+        padding: 8px 10px;
+        font-size: 12px;
+      }
+
+      .hero{
+        padding: 18px 14px;
+      }
+
+      .hero h2{
+        text-align: center;
+        font-size: 22px;
+      }
+
+      .hero p{
+        text-align: center;
+        font-size: 13.5px;
+      }
+
+      .hero-inner{
+        gap: 14px;
+      }
+
+      .section-header{
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+      }
+
+      .news-title{
+        font-size: 14px;
+      }
+
+      .news-text{
+        font-size: 13px;
+      }
+
+      .apps-grid{
+        grid-template-columns: 1fr;
+      }
+
+      .app-card{
+        padding: 12px;
+      }
+
+      .app-icon{
+        width:38px;
+        height:38px;
+      }
+
+      .app-title{
+        font-size: 13.5px;
+      }
+
+      .app-sub{
+        font-size: 12px;
+      }
+
+      .modal{
+        width:100%;
+        height:100%;
+        max-height:100%;
+        border-radius: 0;
+      }
+
+      .modal-body{
+        height: calc(100vh - 56px);
+      }
+
+      .modal-header{
+        padding: 10px;
+      }
+
+      .cafecito{
+        left: 12px;
+        right: 12px;
+        width: auto;
+        bottom: 12px;
+      }
+
+      .footer{
+        flex-direction: column;
+        text-align: center;
+        gap: 6px;
+      }
+    }
+
+    /* Extra small phones */
+    @media (max-width: 420px){
+
+      .icon-btn span{
+        display:none;
+      }
+
+      .icon-btn{
+        padding: 8px;
+        border-radius: 12px;
+      }
+
+      .hero h2{
+        font-size: 20px;
+      }
+
+      .hero p{
+        font-size: 13px;
+      }
+
+      .cafecito h4{
+        font-size: 12.5px;
+      }
+
+      .cafecito p{
+        font-size: 12px;
+      }
+    }
+    /* ========================================================= */
+
+  
+    /* Mobile tune */
+    @media (max-width: 560px){
+      .wrap{ padding: 16px 12px 110px; }
+      .topbar{ flex-direction: column; align-items: stretch; gap: 10px; }
+      .brand{ justify-content: flex-start; }
+      .top-actions{ justify-content: space-between; }
+      .icon-btn{ flex: 1 1 auto; justify-content: center; padding: 12px 12px; border-radius: 16px; }
+      .hero{ padding: 18px 14px; border-radius: 24px; }
+      .section-header{ flex-direction: column; align-items: flex-start; gap: 6px; }
+      .apps-grid{ gap: 10px; }
+      .app-card{ padding: 12px; }
+      .app-icon{ width:40px; height:40px; border-radius: 15px; }
+      .modal{ border-radius: 22px; width: 96vw; }
+      .modal-header{ padding: 10px 10px; flex-direction: column; align-items: stretch; gap: 10px; }
+      .modal-actions{ width: 100%; justify-content: space-between; }
+      .btn{ padding: 12px 12px; border-radius: 16px; }
+      .modal-body{ height: 76vh; }
+      .cafecito{ left: 12px; right: 12px; bottom: 12px; width: auto; border-radius: 22px; }
+      .toast{ bottom: 92px; }
+    }
+
   </style>
 </head>
 
@@ -724,17 +886,7 @@
         </div>
 
         <div class="hero-side">
-          <div class="search" role="search" aria-label="Buscador de apps">
-            <i data-lucide="search"></i>
-            <input id="appSearch" type="text" placeholder="Buscar herramientas… (ej: Calculadora, Talleres, Concursos)" autocomplete="off" />
-            <button class="btn" id="clearSearchBtn" type="button" title="Limpiar">
-              <i data-lucide="x"></i> Limpiar
-            </button>
-          </div>
-
-          <div class="meta">
-            <div class="pill"><i data-lucide="sparkles"></i> Estilo <strong>iOS / Glass</strong></div>
-            <div class="pill"><i data-lucide="zap"></i> SPA <strong>sin salir</strong> de la página</div>
+          <div class="pill"><i data-lucide="zap"></i> SPA <strong>sin salir</strong> de la página</div>
             <div class="pill"><i data-lucide="newspaper"></i> Novedades <strong>con Admin</strong></div>
           </div>
         </div>
@@ -771,7 +923,7 @@
             @docentesbrown
           </a>
         </div>
-        <div>Atajos: <span class="kbd">Esc</span> cerrar · <span class="kbd">Ctrl/⌘</span> + <span class="kbd">K</span> buscar · <span class="kbd">Ctrl/⌘</span> + <span class="kbd">Shift</span> + <span class="kbd">B</span> admin</div>
+        <div>Atajos: <span class="kbd">Esc</span> cerrar · <span class="kbd">Ctrl/⌘</span> + <span class="kbd">Shift</span> + <span class="kbd">B</span> admin</div>
       </div>
     </section>
   </div>
@@ -841,7 +993,7 @@
               <div>
                 <div style="font-weight:850;color:rgba(19,34,53,.86);margin-bottom:6px;">Accesos rápidos</div>
                 <div style="display:flex;flex-direction:column;gap:8px;font-size:13px;color:rgba(19,34,53,.72);">
-                  <div>🔎 Buscar apps: <span class="kbd">Ctrl/⌘</span> + <span class="kbd">K</span></div>
+                  <div>🔎 </div>
                   <div>🛡️ Admin noticias: <span class="kbd">Ctrl/⌘</span> + <span class="kbd">Shift</span> + <span class="kbd">B</span></div>
                   <div>❌ Cerrar modales: <span class="kbd">Esc</span></div>
                 </div>
@@ -1321,12 +1473,7 @@
       $("#helpBtn").addEventListener("click", ()=> showOverlay($("#helpOverlay")));
       $("#closeHelpBtn").addEventListener("click", ()=> hideOverlay($("#helpOverlay")));
       $("#helpOverlay").addEventListener("click", (e)=>{ if(e.target === $("#helpOverlay")) hideOverlay($("#helpOverlay")); });
-
-      const input = $("#appSearch");
-      input.addEventListener("input", ()=> renderApps(input.value));
-      $("#clearSearchBtn").addEventListener("click", ()=>{ input.value = ""; renderApps(""); input.focus(); });
-
-      document.addEventListener("keydown", (e)=>{
+document.addEventListener("keydown", (e)=>{
         if(e.key === "Escape"){
           if($("#appOverlay").classList.contains("show")) return closeApp();
           if($("#adminOverlay").classList.contains("show")) return hideOverlay($("#adminOverlay"));
@@ -1336,7 +1483,7 @@
         const k = e.key.toLowerCase();
         const cmd = e.metaKey || e.ctrlKey;
 
-        if(cmd && k === "k"){ e.preventDefault(); $("#appSearch").focus(); toast("Buscar herramientas"); }
+        
         if(cmd && e.shiftKey && k === "b"){ e.preventDefault(); renderAdmin(); showOverlay($("#adminOverlay")); toast("Admin"); }
       });
 
