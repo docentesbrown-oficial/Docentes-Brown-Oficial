@@ -695,7 +695,13 @@
           <span>Cafecito</span>
         </a>
 
-        <button class="icon-btn" id="adminBtn" title="Admin (Ctrl/⌘ + Shift + B)" aria-label="Abrir login admin">
+        
+        <button class="icon-btn" id="installBtn" title="Instalar la app" aria-label="Instalar la app" style="display:none;">
+          <i data-lucide="download"></i>
+          <span>Instalar</span>
+        </button>
+
+<button class="icon-btn" id="adminBtn" title="Admin (Ctrl/⌘ + Shift + B)" aria-label="Abrir login admin">
           <i data-lucide="shield"></i>
           <span>Admin</span>
         </button>
@@ -918,6 +924,51 @@
 
     const $ = (sel, root=document) => root.querySelector(sel);
     const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
+
+    // --- PWA / Install ---
+    let deferredInstallPrompt = null;
+    const installBtn = () => document.getElementById("installBtn");
+
+    window.addEventListener("beforeinstallprompt", (e) => {
+      // Prevent the mini-infobar
+      e.preventDefault();
+      deferredInstallPrompt = e;
+      const btn = installBtn();
+      if (btn) btn.style.display = "inline-flex";
+    });
+
+    window.addEventListener("appinstalled", () => {
+      deferredInstallPrompt = null;
+      const btn = installBtn();
+      if (btn) btn.style.display = "none";
+      toast("¡App instalada! 🎉");
+    });
+
+    async function triggerInstall() {
+      const prompt = deferredInstallPrompt;
+      if (!prompt) {
+        toast("Tu navegador no ofrece instalación acá.");
+        return;
+      }
+      prompt.prompt();
+      const choice = await prompt.userChoice;
+      if (choice && choice.outcome === "accepted") {
+        toast("Instalando…");
+      } else {
+        toast("Instalación cancelada.");
+      }
+    }
+
+    async function registerSW() {
+      if (!("serviceWorker" in navigator)) return;
+      try {
+        await navigator.serviceWorker.register("./sw.js");
+      } catch (e) {
+        // Silent fail (keeps app working online)
+      }
+    }
+
+
 
     function toast(msg){
       const t = $("#toast");
@@ -1252,6 +1303,10 @@
     }
 
     function bindEvents(){
+      const ib = document.getElementById("installBtn");
+      if (ib) ib.addEventListener("click", triggerInstall);
+
+
       $("#closeAppBtn").addEventListener("click", closeApp);
       $("#appOverlay").addEventListener("click", (e)=>{ if(e.target === $("#appOverlay")) closeApp(); });
 
@@ -1297,7 +1352,7 @@
       });
     }
 
-    function boot(){ renderNews(); renderApps(""); syncCafecito(); lucide.createIcons(); }
+    function boot(){ renderNews(); renderApps(""); syncCafecito(); lucide.createIcons(); registerSW(); }
 
     bindEvents();
     boot();
