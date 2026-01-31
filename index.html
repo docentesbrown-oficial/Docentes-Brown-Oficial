@@ -164,8 +164,8 @@
     .icon-btn span{ font-size: 12px; font-weight: 650; letter-spacing:.02em; }
 
     .hero{
-      margin-top: 18px;
-      padding: 22px 18px;
+      margin-top: 14px;
+      padding: 16px 16px;
       border-radius: var(--radius-lg);
       background: linear-gradient(180deg, rgba(255,255,255,.62), rgba(255,255,255,.42));
       border: 1px solid rgba(36,73,110,.14);
@@ -189,14 +189,10 @@
     .hero-inner{
       position: relative;
       display:grid;
-      grid-template-columns: 1.2fr .8fr;
+      grid-template-columns: 1fr;
       gap: 18px;
       align-items: start;
     }
-    @media (max-width: 900px){
-      .hero-inner{ grid-template-columns: 1fr; }
-    }
-
     .hero h2{
       margin: 0 0 8px;
       font-size: clamp(22px, 3.2vw, 34px);
@@ -255,7 +251,12 @@
     }
     .pill strong{ color: var(--purple); }
 
-    .section{ margin-top: 18px; }
+    .section{ margin-top: 10px; }
+    .section-inner{
+      max-width: 520px;
+      margin: 0 auto;
+      padding: 0 12px;
+    }
     .section-header{
       display:flex;
       align-items:end;
@@ -825,25 +826,21 @@
 
   
     
-    /* Mobile tune v3 - centered, not full width */
+    
+    /* Mobile tune v4 - centered, consistent gutters (no edge-to-edge sections) */
     @media (max-width: 560px){
-      /* Keep a premium "carded" layout: not edge-to-edge */
       .wrap{
-        padding: 14px 0 120px;
+        padding: 14px 14px 120px; /* consistent side gutters */
         max-width: 520px;
       }
-      /* Side gutters */
-      .wrap > *{ margin-left: 12px; margin-right: 12px; }
 
       .topbar{
         flex-direction: column;
         align-items: stretch;
         gap: 10px;
-        padding: 8px 8px 0;
+        padding: 8px 0 0;
       }
-      .brand{ justify-content: flex-start; }
 
-      /* Actions: compact, not full width */
       .top-actions{
         justify-content: flex-start;
         gap: 8px;
@@ -859,19 +856,21 @@
         padding: 16px 14px;
         border-radius: 24px;
       }
-      .hero-inner{ gap: 12px; }
+      .hero-inner{ gap: 10px; }
 
       .section-header{
         flex-direction: column;
         align-items: flex-start;
         gap: 6px;
+        margin: 14px 2px 10px; /* less “wide” feel */
       }
 
+      .news-grid{ gap: 10px; }
       .apps-grid{ gap: 10px; }
       .app-card{ padding: 12px; }
       .app-icon{ width:40px; height:40px; border-radius: 15px; }
 
-      /* Modal: slightly inset */
+      /* Modal: inset */
       .modal{ border-radius: 22px; width: calc(100vw - 24px); }
       .modal-header{
         padding: 10px 10px;
@@ -904,8 +903,7 @@
       .card-body{ padding: 12px 12px 10px; }
       .news-text{ -webkit-line-clamp: 5; }
     }
-
-  </style>
+</style>
 </head>
 
 <body>
@@ -964,13 +962,9 @@
             defendiendo la educación pública con recursos de calidad.
           </p>
         </div>
-
-        <div class="hero-side">
-          <div class="pill"><i data-lucide="zap"></i> SPA <strong>sin salir</strong> de la página</div>
-            <div class="pill"><i data-lucide="newspaper"></i> Novedades <strong>con Admin</strong></div>
-          </div>
-        </div>
-      </div>
+</div>
+            </div>
+    </div>
     </section>
 
     <section class="section" aria-label="Novedades">
@@ -981,8 +975,8 @@
         </div>
         <small>Tip: Login admin con <span class="kbd">Ctrl/⌘</span> + <span class="kbd">Shift</span> + <span class="kbd">B</span></small>
       </div>
-
-      <div class="news-grid" id="newsList"></div>
+      <div class="section-inner">
+        <div class="news-grid" id="newsList"></div>
     </section>
 
     <section class="section" aria-label="Dashboard">
@@ -993,8 +987,10 @@
         </div>
         <small id="appsCount"></small>
       </div>
+      <div class="section-inner">
+        <div class="apps-grid" id="appsGrid">      </div>
 
-      <div class="apps-grid" id="appsGrid"></div>
+      </div>
 
       <div class="footer">
         <div>
