@@ -81,9 +81,11 @@
     .topbar{
       display:flex;
       align-items:center;
-      justify-content:space-between;
+      justify-content:flex-start;
       gap: 12px;
       padding: 10px 10px 0;
+      flex-direction: column;
+      align-items: flex-start;
     }
 
     .brand{
@@ -91,6 +93,7 @@
       align-items:center;
       gap: 10px;
       user-select:none;
+      width: 100%;
     }
     .logo{
       width:42px; height:42px;
@@ -135,6 +138,15 @@
       color: rgba(19,34,53,.72);
     }
     .chip b{ color: var(--blue); }
+
+    
+    /* Header actions under title */
+    .brand .top-actions{
+      margin-top: 10px;
+      width: 100%;
+      justify-content: flex-start;
+      gap: 10px;
+    }
 
     .top-actions{
       display:flex;
@@ -405,6 +417,15 @@
       line-height: 1.35;
     }
     .app-arrow{ opacity:.75; }
+
+    /* App card horizontal layout (icon next to title) */
+    .app-head{
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
     .tagrow{
       display:flex;
       gap: 8px;
@@ -682,10 +703,55 @@
       background: rgba(255,255,255,.45);
       color: rgba(19,34,53,.72);
     }
+    /* App open animations */
+    .overlay{
+      opacity: 0;
+      transition: opacity .18s ease;
+    }
+    .overlay.show{
+      opacity: 1;
+    }
+    .overlay .modal{
+      transform: translateY(10px) scale(.985);
+      opacity: 0;
+      transition: transform .22s cubic-bezier(.2,.8,.2,1), opacity .18s ease;
+      will-change: transform, opacity;
+    }
+    .overlay.show .modal{
+      transform: translateY(0) scale(1);
+      opacity: 1;
+    }
+    .modal-body{
+      position: relative;
+    }
+    .iframe{
+      opacity: 0;
+      transform: translateY(6px);
+      transition: opacity .22s ease, transform .22s ease;
+      will-change: opacity, transform;
+    }
+    .iframe.is-ready{
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .frame-skeleton{
+      position:absolute;
+      inset: 0;
+      background: linear-gradient(90deg, rgba(255,255,255,.25), rgba(255,255,255,.55), rgba(255,255,255,.25));
+      background-size: 200% 100%;
+      animation: shimmer 1.1s ease-in-out infinite;
+      opacity: .65;
+      pointer-events:none;
+    }
+    @keyframes shimmer{
+      0%{ background-position: 200% 0; }
+      100%{ background-position: -200% 0; }
+    }
+
 
     @media (prefers-reduced-motion: reduce){
-      .bg-sheen, .cafecito-badge{ animation:none !important; }
-      .btn, .icon-btn, .app-card{ transition:none !important; }
+      .bg-sheen, .cafecito-badge, .frame-skeleton{ animation:none !important; }
+      .btn, .icon-btn, .app-card, .overlay, .overlay .modal, .iframe{ transition:none !important; }
     }
   </style>
 </head>
@@ -705,10 +771,8 @@
             <i data-lucide="layout-grid"></i>
             <span>Hub central · <b>Súper App Maestra</b></span>
           </div>
-        </div>
-      </div>
 
-      <div class="top-actions">
+          <div class="top-actions">
         <a class="icon-btn" href="https://www.instagram.com/docentesbrown?igsh=c3o4cDR6cHVpZ3E1" target="_blank" rel="noopener noreferrer" title="Instagram @docentesbrown" aria-label="Instagram">
           <i data-lucide="instagram"></i>
           <span>Instagram</span>
@@ -724,6 +788,11 @@
           <i data-lucide="download"></i>
           <span>Instalar</span>
         </button>
+        <a class="icon-btn" href="https://wa.me/5491153196358" target="_blank" rel="noopener noreferrer" title="WhatsApp" aria-label="WhatsApp">
+          <i data-lucide="message-circle"></i>
+          <span>WhatsApp</span>
+        </a>
+
 
 <button class="icon-btn" id="adminBtn" title="Admin (Ctrl/⌘ + Shift + B)" aria-label="Abrir login admin">
           <i data-lucide="shield"></i>
@@ -735,6 +804,11 @@
           <span>Atajos</span>
         </button>
       </div>
+
+        </div>
+      </div>
+
+      
     </div>
 
     <section class="hero" aria-label="Bienvenida">
@@ -820,6 +894,7 @@
         </div>
       </div>
       <div class="modal-body">
+        <div class="frame-skeleton" id="frameSkeleton" aria-hidden="true"></div>
         <iframe class="iframe" id="appFrame" title="Aplicación" loading="lazy" referrerpolicy="no-referrer"></iframe>
       </div>
     </div>
@@ -1083,16 +1158,16 @@
              data-app-icon="${escapeHtml(app.icon)}"
              aria-label="Abrir ${escapeHtml(app.name)}">
           <div class="card-body">
-            <div class="app-head">
-              <div class="app-main">
-                <h4 class="app-title">${escapeHtml(app.name)}</h4>
-                <p class="app-sub">${escapeHtml(app.desc)}</p>
-
-                <div class="app-icon bottom">
+                        <div class="app-head">
+              <div style="display:flex;align-items:center;gap:12px;">
+                <div class="app-icon">
                   <i data-lucide="${escapeHtml(app.icon)}"></i>
                 </div>
+                <div>
+                  <h4 class="app-title">${escapeHtml(app.name)}</h4>
+                  <p class="app-sub">${escapeHtml(app.desc)}</p>
+                </div>
               </div>
-
               <div class="app-arrow">
                 <i data-lucide="chevron-right"></i>
               </div>
