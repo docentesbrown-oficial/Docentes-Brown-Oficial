@@ -545,6 +545,7 @@
     }
 
     .modal-body{
+      position: relative;
       padding: 0;
       height: 78vh;
       background: rgba(255,255,255,.35);
@@ -924,6 +925,23 @@
       </div>
       <div class="modal-body">
         <div class="frame-skeleton" id="frameSkeleton" aria-hidden="true"></div>
+        <div id="frameFallback" style="position:absolute;inset:0;display:none;align-items:center;justify-content:center;padding:18px;z-index:2;">
+          <div class="card" style="max-width:520px;width:100%;margin:0;">
+            <div class="card-body">
+              <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+                <i data-lucide="alert-triangle"></i>
+                <div style="font-weight:900;color:rgba(19,34,53,.88);">Esta app no se puede mostrar dentro del hub</div>
+              </div>
+              <div style="color:rgba(19,34,53,.72);font-size:13.5px;line-height:1.45;">
+                Algunos sitios bloquean la vista embebida por seguridad. Abrila en una nueva pestaña.
+              </div>
+              <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;">
+                <a class="btn primary" id="fallbackOpenBtn" href="#" target="_blank" rel="noopener noreferrer"><i data-lucide="external-link"></i> Abrir en nueva pestaña</a>
+                <button class="btn" id="fallbackRetryBtn" type="button"><i data-lucide="rotate-ccw"></i> Reintentar</button>
+              </div>
+            </div>
+          </div>
+        </div>
         <iframe class="iframe" id="appFrame" title="Aplicación" loading="lazy" referrerpolicy="no-referrer"></iframe>
       </div>
     </div>
@@ -1222,20 +1240,61 @@
     }
 
     let currentAppUrl = "";
+    let openAppWatchdog = null;
+
+    function showFrameFallback(url){
+      const fb = document.getElementById("frameFallback");
+      const skel = document.getElementById("frameSkeleton");
+      const btn = document.getElementById("fallbackOpenBtn");
+      if(btn) btn.href = url || "#";
+      if(skel) skel.style.display = "none";
+      if(fb) fb.style.display = "flex";
+      lucide.createIcons();
+    }
+    function hideFrameFallback(){
+      const fb = document.getElementById("frameFallback");
+      if(fb) fb.style.display = "none";
+    }
+
     function openApp(name, url, icon){
       currentAppUrl = url;
       $("#modalTitle").textContent = name;
-      $("#appFrame").src = url;
+
+      const frame = $("#appFrame");
+      const skel = document.getElementById("frameSkeleton");
+      const fbOpen = document.getElementById("fallbackOpenBtn");
+      hideFrameFallback();
+
+      frame.classList.remove("is-ready");
+      if (skel) skel.style.display = "block";
+      if (fbOpen) fbOpen.href = url;
+
+      // Set src (may be blocked by X-Frame-Options/CSP)
+      frame.src = url;
+
       const iconWrap = $("#modalIcon");
       iconWrap.innerHTML = `<i data-lucide="${icon || "app-window"}"></i>`;
       lucide.createIcons();
       showOverlay($("#appOverlay"));
       toast("Abriendo: " + name);
+
+      clearTimeout(openAppWatchdog);
+      openAppWatchdog = setTimeout(() => {
+        const frame = $("#appFrame");
+        if (!frame.classList.contains("is-ready")) {
+          showFrameFallback(currentAppUrl);
+        }
+      }, 1800);
     }
 
     function closeApp(){
       hideOverlay($("#appOverlay"));
       const frame = $("#appFrame");
+      const skel = document.getElementById("frameSkeleton");
+      frame.classList.remove("is-ready");
+      if (skel) skel.style.display = "block";
+      hideFrameFallback();
+      clearTimeout(openAppWatchdog);
       frame.src = "about:blank";
       currentAppUrl = "";
     }
@@ -1438,7 +1497,23 @@
       $("#closeAppBtn").addEventListener("click", closeApp);
       $("#appOverlay").addEventListener("click", (e)=>{ if(e.target === $("#appOverlay")) closeApp(); });
 
-      $("#openNewTabBtn").addEventListener("click", ()=>{
+      
+      // App frame load: reveal smoothly
+      const frame = document.getElementById("appFrame");
+      const skel = document.getElementById("frameSkeleton");
+      frame.addEventListener("load", () => {
+        frame.classList.add("is-ready");
+        if (skel) skel.style.display = "none";
+        hideFrameFallback();
+        clearTimeout(openAppWatchdog);
+      });
+
+      const retry = document.getElementById("fallbackRetryBtn");
+      if (retry) retry.addEventListener("click", () => {
+        if (currentAppUrl) openApp($("#modalTitle").textContent, currentAppUrl, "app-window");
+      });
+
+$("#openNewTabBtn").addEventListener("click", ()=>{
         if(currentAppUrl) window.open(currentAppUrl, "_blank", "noopener,noreferrer");
       });
 
