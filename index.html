@@ -40,7 +40,20 @@
     }
 
     *{ box-sizing: border-box; }
-    html,body{ height:100%; }
+    html,
+  body{
+    margin:0;
+    font-family: var(--font);
+    background:
+      radial-gradient(1200px 600px at 10% 0%, rgba(61,143,176,.18), transparent 60%),
+      radial-gradient(900px 500px at 90% 20%, rgba(77,48,105,.16), transparent 60%),
+      radial-gradient(800px 500px at 50% 100%, rgba(190,127,79,.14), transparent 60%),
+      linear-gradient(180deg, #f7f4ea 0%, #f3efdc 40%, #f1ecd6 100%);
+    color: var(--text);
+    min-height:100vh;
+    overflow-x:hidden;
+  }
+
     body{
       margin:0;
       font-family: var(--font);
@@ -71,6 +84,8 @@
     @keyframes spin{ to{ transform: rotate(360deg);} }
 
     .wrap{
+      position:relative;
+      z-index:1;
       position: relative;
       z-index:1;
       max-width: 1200px;
@@ -311,14 +326,21 @@
     }
 
     .news-grid{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
+      display:flex;
       gap: 12px;
+      overflow-x: auto;
+      padding-bottom: 6px;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
     }
-    @media (max-width: 900px){
-      .news-grid{ grid-template-columns: 1fr; }
+    .news-grid::-webkit-scrollbar{ height: 8px; }
+    .news-grid::-webkit-scrollbar-thumb{ background: rgba(36,73,110,.18); border-radius: 999px; }
+    .news-grid > .card{
+      min-width: min(420px, 86vw);
+      scroll-snap-align: start;
+      flex: 0 0 auto;
     }
-
+    /* News strip */
     .card{
       border-radius: var(--radius);
       background: var(--glass);
@@ -753,10 +775,22 @@
       .bg-sheen, .cafecito-badge, .frame-skeleton{ animation:none !important; }
       .btn, .icon-btn, .app-card, .overlay, .overlay .modal, .iframe{ transition:none !important; }
     }
-  </style>
+  
+  /* Subtle background noise for smoothness */
+  .bg-noise{
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='.025'/%3E%3C/svg%3E");
+    mix-blend-mode:soft-light;
+    z-index:0;
+  }
+
+</style>
 </head>
 
 <body>
+  <div class="bg-noise"></div>
   <div class="bg-sheen" aria-hidden="true"></div>
 
   <div class="wrap">
@@ -766,13 +800,8 @@
           <i data-lucide="sparkles"></i>
         </div>
         <div>
-          <h1><i data-lucide="star" class="brand-star"></i> DOCENTES BROWN</h1>
-          <div class="chip">
-            <i data-lucide="layout-grid"></i>
-            <span>Hub central · <b>Súper App Maestra</b></span>
-          </div>
-
-          <div class="top-actions">
+          <h1> DOCENTES BROWN</h1>
+<div class="top-actions">
         <a class="icon-btn" href="https://www.instagram.com/docentesbrown?igsh=c3o4cDR6cHVpZ3E1" target="_blank" rel="noopener noreferrer" title="Instagram @docentesbrown" aria-label="Instagram">
           <i data-lucide="instagram"></i>
           <span>Instagram</span>
@@ -1097,7 +1126,7 @@
       return items;
     }
     function saveNews(items){ localStorage.setItem(LS_KEYS.news, JSON.stringify(items)); }
-    function addNews(item){ const items = loadNews(); items.unshift(item); saveNews(items); renderNews(); }
+    function addNews(item){ const items = loadNews(); items.unshift(item); const capped = items.slice(0,2); saveNews(capped); renderNews(); }
 
     function escapeHtml(s){
       return String(s)
@@ -1122,7 +1151,7 @@
         return;
       }
 
-      list.innerHTML = items.slice(0,6).map((n, idx)=>`
+      list.innerHTML = items.slice(0,2).map((n, idx)=>`
         <article class="card" aria-label="Noticia ${idx+1}">
           <div class="card-body">
             <h4 class="news-title">${escapeHtml(n.title || "Sin título")}</h4>
@@ -1421,10 +1450,6 @@
       $("#closeHelpBtn").addEventListener("click", ()=> hideOverlay($("#helpOverlay")));
       $("#helpOverlay").addEventListener("click", (e)=>{ if(e.target === $("#helpOverlay")) hideOverlay($("#helpOverlay")); });
 
-      const input = $("#appSearch");
-      input.addEventListener("input", ()=> renderApps(input.value));
-      $("#clearSearchBtn").addEventListener("click", ()=>{ input.value = ""; renderApps(""); input.focus(); });
-
       document.addEventListener("keydown", (e)=>{
         if(e.key === "Escape"){
           if($("#appOverlay").classList.contains("show")) return closeApp();
@@ -1434,9 +1459,7 @@
 
         const k = e.key.toLowerCase();
         const cmd = e.metaKey || e.ctrlKey;
-
-        if(cmd && k === "k"){ e.preventDefault(); $("#appSearch").focus(); toast("Buscar herramientas"); }
-        if(cmd && e.shiftKey && k === "b"){ e.preventDefault(); renderAdmin(); showOverlay($("#adminOverlay")); toast("Admin"); }
+if(cmd && e.shiftKey && k === "b"){ e.preventDefault(); renderAdmin(); showOverlay($("#adminOverlay")); toast("Admin"); }
       });
 
       $("#cafecitoClose").addEventListener("click", ()=>{
