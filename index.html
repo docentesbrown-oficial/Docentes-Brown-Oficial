@@ -1039,6 +1039,7 @@
 
     const ADMIN_USER = "Brown";
     const ADMIN_PASS = "2025";
+    const NEWS_API_URL = "https://script.google.com/macros/s/AKfycbyzHewHK_FFtDrKhuqUTCPSWX7QknCdg7fmGiI3mUq3v3cMAhYtVeN_YiZF8J-sBaTH/exec";
 
     const LS_KEYS = {
       news: "db_hub_news_v1",
@@ -1133,18 +1134,53 @@
       return String(d).padStart(2,"0") + "/" + String(m).padStart(2,"0") + "/" + y;
     }
 
-    function loadNews(){
-      const raw = localStorage.getItem(LS_KEYS.news);
-      const items = safeJsonParse(raw, []);
-      items.sort((a,b)=>{
-        const da = (a.date || "") + (a.createdAt || "");
-        const db = (b.date || "") + (b.createdAt || "");
-        return db.localeCompare(da);
-      });
-      return items;
+    
+    // --- Noticias (GLOBAL) ---
+    // localStorage era solo por navegador. Ahora leemos/escribimos en Apps Script (Google Sheet) para que lo vean todos.
+    // Si el backend falla, usamos localStorage como cache de emergencia.
+    async function loadNews(){
+      try{
+        const res = await fetch(NEWS_API_URL, { method: "GET", cache: "no-store" });
+        const data = await res.json();
+        if(data && data.ok && Array.isArray(data.news)){
+          // cache local de respaldo
+          localStorage.setItem(LS_KEYS.news, JSON.stringify(data.news));
+          return data.news;
+        }
+        throw new Error((data && data.error) ? data.error : "Respuesta inválida");
+      }catch(err){
+        const raw = localStorage.getItem(LS_KEYS.news);
+        const items = safeJsonParse(raw, []);
+        return Array.isArray(items) ? items.slice(0,2) : [];
+      }
     }
-    function saveNews(items){ localStorage.setItem(LS_KEYS.news, JSON.stringify(items)); }
-    function addNews(item){ const items = loadNews(); items.unshift(item); const capped = items.slice(0,2); saveNews(capped); renderNews(); }
+
+    // Mantengo esta firma por compatibilidad (solo cache local)
+    function saveNews(items){
+      localStorage.setItem(LS_KEYS.news, JSON.stringify((items||[]).slice(0,2)));
+    }
+
+    async function addNews(item){
+      // Publica en backend (Apps Script) -> devuelve últimas 2
+      const payload = {
+        user: ADMIN_USER,
+        pass: ADMIN_PASS,
+        title: item.title,
+        body: item.body,
+        date: item.date
+      };
+
+      const res = await fetch(NEWS_API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+
+      const data = await res.json();
+      if(!(data && data.ok)) throw new Error((data && data.error) ? data.error : "No se pudo publicar");
+      if(Array.isArray(data.news)) saveNews(data.news);
+      await renderNews();
+    }
 
     function escapeHtml(s){
       return String(s)
@@ -1152,16 +1188,16 @@
         .replaceAll('"',"&quot;").replaceAll("'","&#039;");
     }
 
-    function renderNews(){
+    async function renderNews(){
       const list = $("#newsList");
-      const items = loadNews();
+      const items = await loadNews();
 
       if(!items.length){
         list.innerHTML = `
           <div class="card" style="grid-column: 1 / -1;">
             <div class="empty">
               <b style="color: var(--blue);">Todavía no hay novedades cargadas.</b><br/>
-              Cuando publiques una noticia desde el Admin, va a aparecer acá y quedará guardada en tu navegador.
+              Cuando publiques una noticia desde el Admin, va a aparecer acá y quedará publicada para todos.
             </div>
           </div>
         `;
@@ -1316,7 +1352,7 @@
                 <div style="font-weight:850;color:rgba(19,34,53,.86);">Ingreso de administrador</div>
               </div>
               <div class="hint" style="margin-top:0;">
-                Acceso discreto para cargar novedades (guardadas en <code>localStorage</code>).
+                Acceso discreto para cargar novedades (se publican en la Sheet vía Apps Script).
               </div>
 
               <div class="field">
@@ -1384,7 +1420,7 @@
             <div class="status" id="publishStatus"></div>
 
             <div class="hint">
-              <b>Persistencia:</b> las noticias se guardan en <code>localStorage</code> (solo este navegador).
+              <b>Global:</b> las noticias se guardan en Google Sheet (Apps Script) y las ven todos.
               <br/>
               <b>Futuro:</b> para múltiples dispositivos/usuarios, reemplazá <code>loadNews()</code>/<code>saveNews()</code>
               por un <code>fetch()</code> a un JSON, Firebase Firestore, o un endpoint (Apps Script / API propia).
@@ -1434,7 +1470,7 @@
       }
     }
 
-    function handlePublish(){
+    async function handlePublish(){
       const title = ($("#newsTitle").value || "").trim();
       const body  = ($("#newsBody").value || "").trim();
       const date  = ($("#newsDate").value || "").trim();
@@ -1549,7 +1585,7 @@ if(cmd && e.shiftKey && k === "b"){ e.preventDefault(); renderAdmin(); showOverl
       });
     }
 
-    function boot(){ renderNews(); renderApps(""); syncCafecito(); lucide.createIcons(); registerSW(); }
+    async function boot(){ await renderNews(); renderApps(""); syncCafecito(); lucide.createIcons(); registerSW(); }
 
     bindEvents();
     boot();
