@@ -1,0 +1,1306 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Docentes Brown · Súper App Maestra</title>
+
+  <!-- PWA / Icons -->
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="theme-color" content="#24496e">
+  <link rel="icon" type="image/png" href="assets/icons/favicon-32.png">
+  <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    :root{
+      --cream:#f3efdc;
+      --blue:#24496e;
+      --purple:#4d3069;
+      --ochre:#be7f4f;
+
+      --glass: rgba(255,255,255,.58);
+      --stroke: rgba(36,73,110,.18);
+      --shadow: 0 18px 48px rgba(36,73,110,.12);
+      --shadow-soft: 0 10px 30px rgba(0,0,0,.08);
+      --blur: 18px;
+
+      --radius: 20px;
+      --radius-lg: 28px;
+
+      --text: #132235;
+      --ok:#1f8a5b;
+      --danger:#d14545;
+
+      --font: ui-sans-serif, system-ui, -apple-system, "SF Pro Display","SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+
+    *{ box-sizing: border-box; }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      font-family: var(--font);
+      color: var(--text);
+      background: radial-gradient(1200px 600px at 15% 10%, rgba(77,48,105,.20), transparent 60%),
+                  radial-gradient(1100px 700px at 85% 15%, rgba(190,127,79,.22), transparent 55%),
+                  radial-gradient(1000px 600px at 50% 100%, rgba(36,73,110,.16), transparent 60%),
+                  var(--cream);
+      overflow-x:hidden;
+    }
+
+    .bg-sheen{
+      position: fixed;
+      inset:-40%;
+      background: conic-gradient(from 180deg at 50% 50%,
+        rgba(255,255,255,.0),
+        rgba(255,255,255,.18),
+        rgba(255,255,255,.0),
+        rgba(255,255,255,.10),
+        rgba(255,255,255,.0)
+      );
+      filter: blur(60px);
+      opacity:.45;
+      animation: spin 18s linear infinite;
+      pointer-events:none;
+      z-index:0;
+    }
+    @keyframes spin{ to{ transform: rotate(360deg);} }
+
+    .wrap{
+      position: relative;
+      z-index:1;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 22px 18px 90px;
+    }
+
+    .topbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 12px;
+      padding: 10px 10px 0;
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap: 10px;
+      user-select:none;
+    }
+    .logo{
+      width:42px; height:42px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, rgba(36,73,110,.95), rgba(77,48,105,.95));
+      box-shadow: var(--shadow-soft);
+      display:grid;
+      place-items:center;
+      color:#fff;
+      position: relative;
+      overflow:hidden;
+    }
+    .logo::after{
+      content:"";
+      position:absolute;
+      inset:-60%;
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.35), transparent 45%);
+      transform: rotate(18deg);
+    }
+    .brand h1{
+      margin:0;
+      font-size: 14px;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      color: rgba(19,34,53,.75);
+      font-weight: 700;
+    }
+    .chip{
+      margin-top: 2px;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.45);
+      border: 1px solid var(--stroke);
+      backdrop-filter: blur(var(--blur));
+      -webkit-backdrop-filter: blur(var(--blur));
+      box-shadow: 0 10px 28px rgba(0,0,0,.06);
+      font-size: 12px;
+      color: rgba(19,34,53,.72);
+    }
+    .chip b{ color: var(--blue); }
+
+    .top-actions{
+      display:flex;
+      align-items:center;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .icon-btn{
+      appearance:none;
+      border: 1px solid var(--stroke);
+      background: rgba(255,255,255,.40);
+      backdrop-filter: blur(var(--blur));
+      -webkit-backdrop-filter: blur(var(--blur));
+      border-radius: 14px;
+      padding: 10px 12px;
+      cursor:pointer;
+      box-shadow: 0 10px 30px rgba(0,0,0,.06);
+      transition: transform .15s ease, background .2s ease, box-shadow .2s ease;
+      display:inline-flex;
+      align-items:center;
+      gap: 8px;
+      color: rgba(19,34,53,.85);
+      text-decoration: none;
+      white-space: nowrap;
+    }
+    .icon-btn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.55); }
+    .icon-btn:active{ transform: translateY(0px); }
+    .icon-btn span{ font-size: 12px; font-weight: 650; letter-spacing:.02em; }
+
+    .hero{
+      margin-top: 18px;
+      padding: 22px 18px;
+      border-radius: var(--radius-lg);
+      background: linear-gradient(180deg, rgba(255,255,255,.62), rgba(255,255,255,.42));
+      border: 1px solid rgba(36,73,110,.14);
+      backdrop-filter: blur(var(--blur));
+      -webkit-backdrop-filter: blur(var(--blur));
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow:hidden;
+    }
+    .hero::before{
+      content:"";
+      position:absolute;
+      inset:-60px;
+      background:
+        radial-gradient(600px 220px at 20% 15%, rgba(77,48,105,.22), transparent 60%),
+        radial-gradient(600px 240px at 80% 0%, rgba(190,127,79,.20), transparent 55%),
+        radial-gradient(700px 260px at 60% 100%, rgba(36,73,110,.14), transparent 60%);
+      filter: blur(2px);
+      pointer-events:none;
+    }
+    .hero-inner{
+      position: relative;
+      display:grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap: 18px;
+      align-items: start;
+    }
+    @media (max-width: 900px){
+      .hero-inner{ grid-template-columns: 1fr; }
+    }
+
+    .hero h2{
+      margin: 0 0 8px;
+      font-size: clamp(22px, 3.2vw, 34px);
+      line-height:1.15;
+      letter-spacing:-.02em;
+      color: var(--blue);
+    }
+    .hero p{
+      margin:0;
+      font-size: 14.5px;
+      line-height:1.55;
+      color: rgba(19,34,53,.78);
+      max-width: 62ch;
+    }
+
+    .hero-side{ display:flex; flex-direction:column; gap: 10px; }
+
+    .search{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding: 12px 14px;
+      border-radius: 18px;
+      background: rgba(255,255,255,.55);
+      border: 1px solid rgba(36,73,110,.14);
+      backdrop-filter: blur(var(--blur));
+      -webkit-backdrop-filter: blur(var(--blur));
+      box-shadow: 0 12px 30px rgba(0,0,0,.06);
+    }
+    .search input{
+      width:100%;
+      border:0;
+      outline: none;
+      background: transparent;
+      font-size: 14px;
+      color: var(--text);
+    }
+    .search input::placeholder{ color: rgba(19,34,53,.55); }
+
+    .meta{
+      display:flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items:center;
+    }
+    .pill{
+      padding: 8px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      background: rgba(243,239,220,.65);
+      border: 1px solid rgba(190,127,79,.35);
+      color: rgba(19,34,53,.75);
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+    }
+    .pill strong{ color: var(--purple); }
+
+    .section{ margin-top: 18px; }
+    .section-header{
+      display:flex;
+      align-items:end;
+      justify-content:space-between;
+      gap: 12px;
+      margin: 18px 6px 10px;
+    }
+    .section-header h3{
+      margin:0;
+      font-size: 16px;
+      letter-spacing:.02em;
+      color: rgba(19,34,53,.82);
+    }
+    .section-header small{
+      color: rgba(19,34,53,.62);
+      font-size: 12px;
+    }
+
+    .news-grid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    @media (max-width: 900px){
+      .news-grid{ grid-template-columns: 1fr; }
+    }
+
+    .card{
+      border-radius: var(--radius);
+      background: var(--glass);
+      border: 1px solid rgba(36,73,110,.14);
+      box-shadow: var(--shadow-soft);
+      backdrop-filter: blur(var(--blur));
+      -webkit-backdrop-filter: blur(var(--blur));
+      overflow:hidden;
+      position: relative;
+    }
+    .card::after{
+      content:"";
+      position:absolute;
+      inset:-60%;
+      background: radial-gradient(circle at 30% 20%, rgba(255,255,255,.22), transparent 55%);
+      pointer-events:none;
+    }
+    .card-body{ position: relative; padding: 14px 14px 12px; }
+    .news-title{
+      margin:0 0 6px;
+      font-size: 14.5px;
+      letter-spacing: -.01em;
+      color: rgba(19,34,53,.92);
+    }
+    .news-meta{
+      display:flex;
+      align-items:center;
+      gap: 8px;
+      color: rgba(19,34,53,.62);
+      font-size: 12px;
+      margin-bottom: 8px;
+    }
+    .news-text{
+      margin:0;
+      color: rgba(19,34,53,.74);
+      font-size: 13.5px;
+      line-height: 1.5;
+      display: -webkit-box;
+      -webkit-line-clamp: 4;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .empty{ padding: 14px; color: rgba(19,34,53,.62); font-size: 13px; }
+
+    .apps-grid{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+    @media (max-width: 1000px){
+      .apps-grid{ grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 620px){
+      .apps-grid{ grid-template-columns: 1fr; }
+    }
+
+    .app-card{
+      padding: 14px;
+      cursor:pointer;
+      transition: transform .16s ease, box-shadow .2s ease, background .2s ease;
+    }
+    .app-card:hover{
+      transform: translateY(-2px);
+      box-shadow: 0 16px 38px rgba(0,0,0,.10);
+      background: rgba(255,255,255,.62);
+    }
+    .app-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 10px;
+      margin-bottom: 10px;
+      position: relative;
+      z-index:1;
+    }
+    .app-icon{
+      width:42px; height:42px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, rgba(36,73,110,.95), rgba(190,127,79,.85));
+      display:grid;
+      place-items:center;
+      color:#fff;
+      box-shadow: 0 10px 26px rgba(0,0,0,.10);
+    }
+    .app-title{
+      margin:0;
+      font-size: 14px;
+      font-weight: 800;
+      color: rgba(19,34,53,.9);
+      letter-spacing: -.01em;
+    }
+    .app-sub{
+      margin: 4px 0 0;
+      font-size: 12px;
+      color: rgba(19,34,53,.62);
+      line-height: 1.35;
+    }
+    .app-arrow{ opacity:.75; }
+    .tagrow{
+      display:flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+      position: relative;
+      z-index:1;
+    }
+    .tag{
+      font-size: 11px;
+      padding: 6px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(36,73,110,.14);
+      background: rgba(255,255,255,.45);
+      color: rgba(19,34,53,.72);
+    }
+
+    .overlay{
+      position: fixed;
+      inset:0;
+      background: rgba(19,34,53,.42);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding: 16px;
+      z-index: 50;
+    }
+    .overlay.show{ display:flex; }
+
+    .modal{
+      width:min(960px, 96vw);
+      max-height: 88vh;
+      border-radius: 26px;
+      background: rgba(255,255,255,.72);
+      border: 1px solid rgba(255,255,255,.45);
+      box-shadow: 0 26px 80px rgba(0,0,0,.26);
+      overflow:hidden;
+      backdrop-filter: blur(22px);
+      -webkit-backdrop-filter: blur(22px);
+      position: relative;
+    }
+    .modal-header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 10px;
+      padding: 12px 12px 10px;
+      border-bottom: 1px solid rgba(36,73,110,.12);
+      background: linear-gradient(180deg, rgba(255,255,255,.82), rgba(255,255,255,.62));
+    }
+    .modal-header .title{
+      display:flex;
+      align-items:center;
+      gap: 10px;
+      font-weight: 850;
+      letter-spacing:-.01em;
+      color: rgba(19,34,53,.86);
+      font-size: 13.5px;
+    }
+    .modal-actions{
+      display:flex;
+      align-items:center;
+      gap: 8px;
+    }
+    .btn{
+      appearance:none;
+      border: 1px solid rgba(36,73,110,.16);
+      background: rgba(255,255,255,.55);
+      border-radius: 14px;
+      padding: 10px 12px;
+      cursor:pointer;
+      font-weight: 750;
+      font-size: 12px;
+      color: rgba(19,34,53,.85);
+      transition: transform .15s ease, background .2s ease;
+      display:inline-flex;
+      align-items:center;
+      gap: 8px;
+      text-decoration:none;
+    }
+    .btn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.72); }
+    .btn:active{ transform: translateY(0px); }
+    .btn.primary{
+      border-color: rgba(77,48,105,.28);
+      background: linear-gradient(135deg, rgba(77,48,105,.92), rgba(36,73,110,.92));
+      color: #fff;
+      box-shadow: 0 14px 30px rgba(77,48,105,.22);
+    }
+    .btn.danger{
+      border-color: rgba(209,69,69,.25);
+      background: rgba(209,69,69,.10);
+      color: rgba(209,69,69,.95);
+    }
+
+    .modal-body{
+      padding: 0;
+      height: 78vh;
+      background: rgba(255,255,255,.35);
+    }
+    .iframe{
+      width:100%;
+      height:100%;
+      border:0;
+      display:block;
+      background: rgba(255,255,255,.6);
+    }
+
+    .modal.sm{
+      width: min(520px, 96vw);
+      max-height: 86vh;
+    }
+    .modal-content{ padding: 14px; }
+
+    .field{ display:flex; flex-direction:column; gap: 6px; margin: 10px 0; }
+    label{ font-size: 12px; color: rgba(19,34,53,.72); font-weight: 750; letter-spacing:.01em; }
+    input[type="text"], input[type="password"], input[type="date"], textarea{
+      width:100%;
+      border: 1px solid rgba(36,73,110,.18);
+      background: rgba(255,255,255,.65);
+      border-radius: 16px;
+      padding: 12px 12px;
+      font-family: inherit;
+      font-size: 14px;
+      outline:none;
+      color: var(--text);
+      transition: border .2s ease, box-shadow .2s ease, background .2s ease;
+    }
+    textarea{ min-height: 120px; resize: vertical; line-height: 1.45; }
+    input:focus, textarea:focus{
+      border-color: rgba(77,48,105,.35);
+      box-shadow: 0 0 0 4px rgba(77,48,105,.14);
+      background: rgba(255,255,255,.80);
+    }
+
+    .hint{
+      font-size: 12px;
+      color: rgba(19,34,53,.60);
+      margin-top: 8px;
+      line-height: 1.4;
+    }
+    .hint code{
+      background: rgba(243,239,220,.8);
+      border: 1px solid rgba(190,127,79,.35);
+      padding: 1px 6px;
+      border-radius: 10px;
+    }
+
+    .status{
+      margin-top: 10px;
+      font-size: 12px;
+      padding: 10px 12px;
+      border-radius: 16px;
+      border: 1px solid rgba(36,73,110,.12);
+      background: rgba(255,255,255,.55);
+      color: rgba(19,34,53,.72);
+      display:none;
+    }
+    .status.show{ display:block; }
+    .status.ok{
+      border-color: rgba(31,138,91,.22);
+      background: rgba(31,138,91,.10);
+      color: rgba(31,138,91,.95);
+    }
+    .status.bad{
+      border-color: rgba(209,69,69,.22);
+      background: rgba(209,69,69,.10);
+      color: rgba(209,69,69,.95);
+    }
+
+    .cafecito{
+      position: fixed;
+      right: 16px;
+      bottom: 16px;
+      z-index: 60;
+      width: min(380px, calc(100vw - 32px));
+      border-radius: 22px;
+      background: rgba(255,255,255,.70);
+      border: 1px solid rgba(190,127,79,.28);
+      box-shadow: 0 20px 60px rgba(0,0,0,.18);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      overflow:hidden;
+      transform: translateZ(0);
+    }
+    .cafecito-inner{
+      display:flex;
+      gap: 12px;
+      align-items:flex-start;
+      padding: 12px 12px;
+    }
+    .cafecito-badge{
+      width:44px; height:44px;
+      border-radius: 16px;
+      display:grid;
+      place-items:center;
+      color:#fff;
+      background: linear-gradient(135deg, rgba(190,127,79,.95), rgba(77,48,105,.90));
+      box-shadow: 0 12px 28px rgba(0,0,0,.14);
+      position: relative;
+      flex: 0 0 auto;
+      animation: beat 1.6s ease-in-out infinite;
+    }
+    @keyframes beat{
+      0%, 100% { transform: scale(1); }
+      30% { transform: scale(1.06); }
+      55% { transform: scale(0.99); }
+    }
+    .cafecito h4{ margin:0; font-size: 13px; color: rgba(19,34,53,.88); letter-spacing:-.01em; }
+    .cafecito p{ margin: 6px 0 0; font-size: 12.5px; line-height: 1.35; color: rgba(19,34,53,.72); }
+    .cafecito-actions{ display:flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+    .cafecito .btn{ padding: 10px 10px; border-radius: 14px; font-size: 12px; }
+
+    .cafecito .close{
+      position:absolute;
+      top: 8px;
+      right: 8px;
+      width: 36px;
+      height: 36px;
+      border-radius: 14px;
+      border: 1px solid rgba(36,73,110,.14);
+      background: rgba(255,255,255,.45);
+      cursor:pointer;
+      display:grid;
+      place-items:center;
+      color: rgba(19,34,53,.75);
+      transition: transform .15s ease, background .2s ease;
+    }
+    .cafecito .close:hover{ transform: translateY(-1px); background: rgba(255,255,255,.65); }
+
+    .toast{
+      position: fixed;
+      left: 50%;
+      bottom: 18px;
+      transform: translateX(-50%);
+      z-index: 80;
+      background: rgba(19,34,53,.86);
+      color: rgba(255,255,255,.92);
+      padding: 10px 12px;
+      border-radius: 999px;
+      font-size: 12.5px;
+      display:none;
+      box-shadow: 0 18px 50px rgba(0,0,0,.26);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      max-width: calc(100vw - 28px);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .toast.show{ display:block; animation: pop .18s ease; }
+    @keyframes pop{
+      from{ transform: translateX(-50%) translateY(8px); opacity:0; }
+      to{ transform: translateX(-50%) translateY(0); opacity:1; }
+    }
+
+    .footer{
+      margin-top: 18px;
+      padding: 14px 6px 0;
+      color: rgba(19,34,53,.55);
+      font-size: 12px;
+      display:flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content:space-between;
+      align-items:center;
+    }
+    .kbd{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 10px;
+      border: 1px solid rgba(36,73,110,.18);
+      background: rgba(255,255,255,.45);
+      color: rgba(19,34,53,.72);
+    }
+
+    @media (prefers-reduced-motion: reduce){
+      .bg-sheen, .cafecito-badge{ animation:none !important; }
+      .btn, .icon-btn, .app-card{ transition:none !important; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="bg-sheen" aria-hidden="true"></div>
+
+  <div class="wrap">
+    <div class="topbar">
+      <div class="brand">
+        <div class="logo" aria-hidden="true">
+          <i data-lucide="sparkles"></i>
+        </div>
+        <div>
+          <h1>DOCENTES BROWN</h1>
+          <div class="chip">
+            <i data-lucide="layout-grid"></i>
+            <span>Hub central · <b>Súper App Maestra</b></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="top-actions">
+        <a class="icon-btn" href="https://www.instagram.com/docentesbrown?igsh=c3o4cDR6cHVpZ3E1" target="_blank" rel="noopener noreferrer" title="Instagram @docentesbrown">
+          <i data-lucide="instagram"></i>
+          <span>Instagram</span>
+        </a>
+
+        <a class="icon-btn" href="https://cafecito.app/docentesbrown" target="_blank" rel="noopener noreferrer" title="Cafecito Docentes Brown">
+          <i data-lucide="coffee"></i>
+          <span>Cafecito</span>
+        </a>
+
+        <button class="icon-btn" id="adminBtn" title="Admin (Ctrl/⌘ + Shift + B)" aria-label="Abrir login admin">
+          <i data-lucide="shield"></i>
+          <span>Admin</span>
+        </button>
+
+        <button class="icon-btn" id="helpBtn" title="Atajos">
+          <i data-lucide="keyboard"></i>
+          <span>Atajos</span>
+        </button>
+      </div>
+    </div>
+
+    <section class="hero" aria-label="Bienvenida">
+      <div class="hero-inner">
+        <div>
+          <h2>Bienvenidos a la Comunidad Docentes Brown</h2>
+          <p>
+            Más que herramientas, construimos redes. Este es un espacio autogestivo creado por y para docentes,
+            defendiendo la educación pública con recursos de calidad.
+          </p>
+        </div>
+
+        <div class="hero-side">
+          <div class="search" role="search" aria-label="Buscador de apps">
+            <i data-lucide="search"></i>
+            <input id="appSearch" type="text" placeholder="Buscar herramientas… (ej: Calculadora, Talleres, Concursos)" autocomplete="off" />
+            <button class="btn" id="clearSearchBtn" type="button" title="Limpiar">
+              <i data-lucide="x"></i> Limpiar
+            </button>
+          </div>
+
+          <div class="meta">
+            <div class="pill"><i data-lucide="sparkles"></i> Estilo <strong>iOS / Glass</strong></div>
+            <div class="pill"><i data-lucide="zap"></i> SPA <strong>sin salir</strong> de la página</div>
+            <div class="pill"><i data-lucide="newspaper"></i> Novedades <strong>con Admin</strong></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" aria-label="Novedades">
+      <div class="section-header">
+        <div>
+          <h3>✨ Novedades</h3>
+          <small>Comunicados y actualizaciones del proyecto</small>
+        </div>
+        <small>Tip: Login admin con <span class="kbd">Ctrl/⌘</span> + <span class="kbd">Shift</span> + <span class="kbd">B</span></small>
+      </div>
+
+      <div class="news-grid" id="newsList"></div>
+    </section>
+
+    <section class="section" aria-label="Dashboard">
+      <div class="section-header">
+        <div>
+          <h3>🧩 Herramientas</h3>
+          <small>Todo en un solo lugar: abrí cada app en un modal high-end</small>
+        </div>
+        <small id="appsCount"></small>
+      </div>
+
+      <div class="apps-grid" id="appsGrid"></div>
+
+      <div class="footer">
+        <div>
+          © Docentes Brown · Hecho con amor docente y obsesión por el UX ✨ ·
+          <a href="https://www.instagram.com/docentesbrown?igsh=c3o4cDR6cHVpZ3E1" target="_blank" rel="noopener noreferrer" style="color:rgba(19,34,53,.72);text-decoration:none;border-bottom:1px dotted rgba(19,34,53,.35);">
+            @docentesbrown
+          </a>
+        </div>
+        <div>Atajos: <span class="kbd">Esc</span> cerrar · <span class="kbd">Ctrl/⌘</span> + <span class="kbd">K</span> buscar · <span class="kbd">Ctrl/⌘</span> + <span class="kbd">Shift</span> + <span class="kbd">B</span> admin</div>
+      </div>
+    </section>
+  </div>
+
+  <!-- APP VIEW MODAL -->
+  <div class="overlay" id="appOverlay" role="dialog" aria-modal="true" aria-label="Visor de app">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="title">
+          <span class="app-icon" id="modalIcon" style="width:36px;height:36px;border-radius:14px;">
+            <i data-lucide="app-window"></i>
+          </span>
+          <span id="modalTitle">Abrir herramienta</span>
+        </div>
+        <div class="modal-actions">
+          <button class="btn" id="openNewTabBtn" type="button" title="Abrir en nueva pestaña">
+            <i data-lucide="external-link"></i> Nueva pestaña
+          </button>
+          <button class="btn danger" id="closeAppBtn" type="button">
+            <i data-lucide="x"></i> Cerrar
+          </button>
+        </div>
+      </div>
+      <div class="modal-body">
+        <iframe class="iframe" id="appFrame" title="Aplicación" loading="lazy" referrerpolicy="no-referrer"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADMIN MODAL -->
+  <div class="overlay" id="adminOverlay" role="dialog" aria-modal="true" aria-label="Administrador de noticias">
+    <div class="modal sm">
+      <div class="modal-header">
+        <div class="title">
+          <i data-lucide="shield-check"></i>
+          <span id="adminHeaderTitle">Admin · Login</span>
+        </div>
+        <div class="modal-actions">
+          <button class="btn danger" id="closeAdminBtn" type="button">
+            <i data-lucide="x"></i> Cerrar
+          </button>
+        </div>
+      </div>
+
+      <div class="modal-content" id="adminContent"></div>
+    </div>
+  </div>
+
+  <!-- HELP MODAL -->
+  <div class="overlay" id="helpOverlay" role="dialog" aria-modal="true" aria-label="Ayuda y atajos">
+    <div class="modal sm">
+      <div class="modal-header">
+        <div class="title">
+          <i data-lucide="keyboard"></i>
+          <span>Atajos</span>
+        </div>
+        <div class="modal-actions">
+          <button class="btn danger" id="closeHelpBtn" type="button">
+            <i data-lucide="x"></i> Cerrar
+          </button>
+        </div>
+      </div>
+      <div class="modal-content">
+        <div class="card" style="margin:0;">
+          <div class="card-body">
+            <div style="display:flex;flex-direction:column;gap:10px;">
+              <div>
+                <div style="font-weight:850;color:rgba(19,34,53,.86);margin-bottom:6px;">Accesos rápidos</div>
+                <div style="display:flex;flex-direction:column;gap:8px;font-size:13px;color:rgba(19,34,53,.72);">
+                  <div>🔎 Buscar apps: <span class="kbd">Ctrl/⌘</span> + <span class="kbd">K</span></div>
+                  <div>🛡️ Admin noticias: <span class="kbd">Ctrl/⌘</span> + <span class="kbd">Shift</span> + <span class="kbd">B</span></div>
+                  <div>❌ Cerrar modales: <span class="kbd">Esc</span></div>
+                </div>
+              </div>
+              <div class="hint">
+                Tip UX: si en el futuro querés login real, conectamos el Admin a Firebase Auth o a un backend propio (Apps Script, API, etc.).
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CAFECITO FLOAT -->
+  <aside class="cafecito" id="cafecito" aria-label="Cafecito">
+    <button class="close" id="cafecitoClose" aria-label="Cerrar banner">
+      <i data-lucide="x"></i>
+    </button>
+    <div class="cafecito-inner">
+      <div class="cafecito-badge" aria-hidden="true">
+        <i data-lucide="heart"></i>
+      </div>
+      <div>
+        <h4>¿Estas herramientas te facilitan la tarea?</h4>
+        <p>Ayudanos a sostener este proyecto autogestivo con un cafecito ❤️</p>
+        <div class="cafecito-actions">
+          <a class="btn primary" href="https://cafecito.app/docentesbrown" id="cafecitoBtn" target="_blank" rel="noopener noreferrer">
+            <i data-lucide="coffee"></i> Invitar un cafecito
+          </a>
+          <button class="btn" type="button" id="cafecitoLater">
+            <i data-lucide="clock-3"></i> Más tarde
+          </button>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    /***********************
+     * Docentes Brown Hub
+     * SPA (single index.html)
+     *
+     * Noticias: localStorage (persisten al recargar en ESTE navegador)
+     * - Para futuro: reemplazar load/save por fetch a JSON / Firebase / Apps Script.
+     ***********************/
+
+    const ADMIN_USER = "Brown";
+    const ADMIN_PASS = "2025";
+
+    const LS_KEYS = {
+      news: "db_hub_news_v1",
+      admin: "db_hub_admin_logged_v1",
+      cafecitoHidden: "db_hub_cafecito_hidden_v1",
+      cafecitoSnoozeUntil: "db_hub_cafecito_snooze_until_v1",
+    };
+
+    const APPS = [
+      { name: "Tienda Virtual", url: "https://docentesbrown-oficial.github.io/tienda.virtual/", icon: "shopping-bag",
+        desc: "Compras y recursos para la comunidad.", tags: ["Recursos","Comunidad"] },
+      { name: "Talleres", url: "https://docentesbrown-oficial.github.io/Talleres/", icon: "graduation-cap",
+        desc: "Capacitaciones, espacios y encuentros.", tags: ["Formación","Talleres"] },
+      { name: "Calculadora Salarial", url: "https://docentesbrown-oficial.github.io/Calculadora.Salarial/", icon: "calculator",
+        desc: "Simulá tu recibo y componentes salariales.", tags: ["Sueldo","Docentes"] },
+      { name: "Buscador de Escuelas", url: "https://docentesbrown-oficial.github.io/Buscador.Escuelas.Provincial/", icon: "school",
+        desc: "Encontrá escuelas y datos clave.", tags: ["Búsqueda","Provincia"] },
+      { name: "Buscador de Concursos", url: "https://docentesbrown-oficial.github.io/Buscador.Concursos/", icon: "trophy",
+        desc: "Concursos, fechas y recordatorios.", tags: ["Concursos","Info"] },
+      { name: "Quiero ser docente", url: "https://docentesbrown-oficial.github.io/Quieroserdocente/", icon: "sparkles",
+        desc: "Guía para quienes empiezan el camino docente.", tags: ["Guía","Ingreso"] },
+      { name: "Calculadora PAD", url: "https://docentesbrown-oficial.github.io/Calculadora.PAD/", icon: "file-spreadsheet",
+        desc: "Cálculos PAD de forma simple.", tags: ["PAD","Cálculos"] },
+      { name: "Feria de Emprendedores", url: "https://docentesbrown-oficial.github.io/Feria.Emprendedores/", icon: "store",
+        desc: "Emprendimientos y difusión.", tags: ["Feria","Emprender"] },
+      { name: "Catálogo Formación", url: "https://docentesbrown-oficial.github.io/Catalago.Formacion.Profesional/", icon: "book-open",
+        desc: "Oferta de formación profesional.", tags: ["Catálogo","FP"] },
+    ];
+
+    const $ = (sel, root=document) => root.querySelector(sel);
+    const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
+
+    function toast(msg){
+      const t = $("#toast");
+      t.textContent = msg;
+      t.classList.add("show");
+      clearTimeout(toast._timer);
+      toast._timer = setTimeout(()=> t.classList.remove("show"), 2200);
+    }
+
+    function safeJsonParse(str, fallback){ try { return JSON.parse(str) ?? fallback; } catch { return fallback; } }
+
+    function formatDate(iso){
+      if(!iso) return "";
+      const [y,m,d] = iso.split("-").map(Number);
+      if(!y || !m || !d) return iso;
+      return String(d).padStart(2,"0") + "/" + String(m).padStart(2,"0") + "/" + y;
+    }
+
+    function loadNews(){
+      const raw = localStorage.getItem(LS_KEYS.news);
+      const items = safeJsonParse(raw, []);
+      items.sort((a,b)=>{
+        const da = (a.date || "") + (a.createdAt || "");
+        const db = (b.date || "") + (b.createdAt || "");
+        return db.localeCompare(da);
+      });
+      return items;
+    }
+    function saveNews(items){ localStorage.setItem(LS_KEYS.news, JSON.stringify(items)); }
+    function addNews(item){ const items = loadNews(); items.unshift(item); saveNews(items); renderNews(); }
+
+    function escapeHtml(s){
+      return String(s)
+        .replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;").replaceAll("'","&#039;");
+    }
+
+    function renderNews(){
+      const list = $("#newsList");
+      const items = loadNews();
+
+      if(!items.length){
+        list.innerHTML = `
+          <div class="card" style="grid-column: 1 / -1;">
+            <div class="empty">
+              <b style="color: var(--blue);">Todavía no hay novedades cargadas.</b><br/>
+              Cuando publiques una noticia desde el Admin, va a aparecer acá y quedará guardada en tu navegador.
+            </div>
+          </div>
+        `;
+        lucide.createIcons();
+        return;
+      }
+
+      list.innerHTML = items.slice(0,6).map((n, idx)=>`
+        <article class="card" aria-label="Noticia ${idx+1}">
+          <div class="card-body">
+            <h4 class="news-title">${escapeHtml(n.title || "Sin título")}</h4>
+            <div class="news-meta">
+              <i data-lucide="calendar"></i>
+              <span>${escapeHtml(formatDate(n.date) || "")}</span>
+              <span style="opacity:.6;">·</span>
+              <i data-lucide="sparkle"></i>
+              <span>Docentes Brown</span>
+            </div>
+            <p class="news-text">${escapeHtml(n.body || "")}</p>
+          </div>
+        </article>
+      `).join("");
+
+      lucide.createIcons();
+    }
+
+    function renderApps(filter=""){
+      const grid = $("#appsGrid");
+      const count = $("#appsCount");
+      const q = filter.trim().toLowerCase();
+      const filtered = APPS.filter(a => a.name.toLowerCase().includes(q));
+
+      count.textContent = filtered.length === APPS.length
+        ? `${APPS.length} herramientas disponibles`
+        : `${filtered.length} de ${APPS.length} herramientas`;
+
+      grid.innerHTML = filtered.map(app => `
+        <div class="card app-card" role="button" tabindex="0"
+             data-app-name="${escapeHtml(app.name)}"
+             data-app-url="${escapeHtml(app.url)}"
+             data-app-icon="${escapeHtml(app.icon)}"
+             aria-label="Abrir ${escapeHtml(app.name)}">
+          <div class="card-body">
+            <div class="app-head">
+              <div style="display:flex;align-items:center;gap:12px;">
+                <div class="app-icon">
+                  <i data-lucide="${escapeHtml(app.icon)}"></i>
+                </div>
+                <div>
+                  <h4 class="app-title">${escapeHtml(app.name)}</h4>
+                  <p class="app-sub">${escapeHtml(app.desc)}</p>
+                </div>
+              </div>
+              <div class="app-arrow">
+                <i data-lucide="chevron-right"></i>
+              </div>
+            </div>
+            <div class="tagrow">
+              ${(app.tags||[]).slice(0,3).map(t => `<span class="tag">${escapeHtml(t)}</span>`).join("")}
+            </div>
+          </div>
+        </div>
+      `).join("");
+
+      lucide.createIcons();
+
+      $$(".app-card").forEach(card=>{
+        card.addEventListener("click", ()=> openApp(card.dataset.appName, card.dataset.appUrl, card.dataset.appIcon));
+        card.addEventListener("keydown", (e)=>{
+          if(e.key === "Enter" || e.key === " "){
+            e.preventDefault();
+            openApp(card.dataset.appName, card.dataset.appUrl, card.dataset.appIcon);
+          }
+        });
+      });
+    }
+
+    let currentAppUrl = "";
+    function openApp(name, url, icon){
+      currentAppUrl = url;
+      $("#modalTitle").textContent = name;
+      $("#appFrame").src = url;
+      const iconWrap = $("#modalIcon");
+      iconWrap.innerHTML = `<i data-lucide="${icon || "app-window"}"></i>`;
+      lucide.createIcons();
+      showOverlay($("#appOverlay"));
+      toast("Abriendo: " + name);
+    }
+
+    function closeApp(){
+      hideOverlay($("#appOverlay"));
+      const frame = $("#appFrame");
+      frame.src = "about:blank";
+      currentAppUrl = "";
+    }
+
+    function isAdminLogged(){ return localStorage.getItem(LS_KEYS.admin) === "1"; }
+    function setAdminLogged(val){ localStorage.setItem(LS_KEYS.admin, val ? "1" : "0"); }
+
+    function renderAdmin(){
+      const content = $("#adminContent");
+      const header = $("#adminHeaderTitle");
+
+      if(!isAdminLogged()){
+        header.textContent = "Admin · Login";
+        content.innerHTML = `
+          <div class="card" style="margin:0;">
+            <div class="card-body">
+              <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+                <i data-lucide="lock"></i>
+                <div style="font-weight:850;color:rgba(19,34,53,.86);">Ingreso de administrador</div>
+              </div>
+              <div class="hint" style="margin-top:0;">
+                Acceso discreto para cargar novedades (guardadas en <code>localStorage</code>).
+              </div>
+
+              <div class="field">
+                <label for="adminUser">Usuario</label>
+                <input id="adminUser" type="text" placeholder="Usuario" autocomplete="username" />
+              </div>
+              <div class="field">
+                <label for="adminPass">Clave</label>
+                <input id="adminPass" type="password" placeholder="Clave" autocomplete="current-password" />
+              </div>
+
+              <button class="btn primary" id="adminLoginBtn" type="button" style="width:100%;justify-content:center;margin-top:8px;">
+                <i data-lucide="log-in"></i> Ingresar
+              </button>
+
+              <div class="status" id="adminStatus"></div>
+
+              <div class="hint">
+                <b>Nota técnica:</b> esto está hardcodeado (como pediste). En producción real, lo conectamos a Auth + DB.
+              </div>
+            </div>
+          </div>
+        `;
+
+        lucide.createIcons();
+        $("#adminLoginBtn").addEventListener("click", handleAdminLogin);
+        $("#adminPass").addEventListener("keydown", (e)=>{ if(e.key==="Enter") handleAdminLogin(); });
+        setTimeout(()=> $("#adminUser")?.focus(), 50);
+        return;
+      }
+
+      header.textContent = "Admin · Publicar Novedad";
+      content.innerHTML = `
+        <div class="card" style="margin:0;">
+          <div class="card-body">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;">
+              <div style="display:flex;align-items:center;gap:10px;">
+                <i data-lucide="newspaper"></i>
+                <div style="font-weight:850;color:rgba(19,34,53,.86);">Cargar noticia</div>
+              </div>
+              <button class="btn" id="adminLogoutBtn" type="button" title="Cerrar sesión admin">
+                <i data-lucide="log-out"></i> Salir
+              </button>
+            </div>
+
+            <div class="field">
+              <label for="newsTitle">Título</label>
+              <input id="newsTitle" type="text" placeholder="Ej: Se actualizó el Buscador de Concursos" />
+            </div>
+
+            <div class="field">
+              <label for="newsBody">Cuerpo</label>
+              <textarea id="newsBody" placeholder="Contá la novedad…"></textarea>
+            </div>
+
+            <div class="field">
+              <label for="newsDate">Fecha</label>
+              <input id="newsDate" type="date" />
+            </div>
+
+            <button class="btn primary" id="publishBtn" type="button" style="width:100%;justify-content:center;margin-top:8px;">
+              <i data-lucide="send"></i> Publicar
+            </button>
+
+            <div class="status" id="publishStatus"></div>
+
+            <div class="hint">
+              <b>Persistencia:</b> las noticias se guardan en <code>localStorage</code> (solo este navegador).
+              <br/>
+              <b>Futuro:</b> para múltiples dispositivos/usuarios, reemplazá <code>loadNews()</code>/<code>saveNews()</code>
+              por un <code>fetch()</code> a un JSON, Firebase Firestore, o un endpoint (Apps Script / API propia).
+            </div>
+          </div>
+        </div>
+      `;
+
+      lucide.createIcons();
+
+      const today = new Date();
+      const yyyy = today.getFullYear();
+      const mm = String(today.getMonth()+1).padStart(2,"0");
+      const dd = String(today.getDate()).padStart(2,"0");
+      $("#newsDate").value = `${yyyy}-${mm}-${dd}`;
+
+      $("#adminLogoutBtn").addEventListener("click", ()=>{
+        setAdminLogged(false);
+        toast("Sesión admin cerrada");
+        renderAdmin();
+      });
+
+      $("#publishBtn").addEventListener("click", handlePublish);
+      $("#newsBody").addEventListener("keydown", (e)=>{
+        if((e.ctrlKey || e.metaKey) && e.key.toLowerCase()==="enter") handlePublish();
+      });
+
+      setTimeout(()=> $("#newsTitle")?.focus(), 50);
+    }
+
+    function handleAdminLogin(){
+      const user = ($("#adminUser").value || "").trim();
+      const pass = ($("#adminPass").value || "").trim();
+      const status = $("#adminStatus");
+      status.className = "status show";
+
+      if(user === ADMIN_USER && pass === ADMIN_PASS){
+        setAdminLogged(true);
+        status.classList.add("ok");
+        status.textContent = "Login correcto. Bienvenido al panel de noticias.";
+        toast("Admin: acceso concedido");
+        setTimeout(renderAdmin, 350);
+      }else{
+        status.classList.add("bad");
+        status.textContent = "Usuario o clave incorrectos.";
+        toast("Credenciales inválidas");
+      }
+    }
+
+    function handlePublish(){
+      const title = ($("#newsTitle").value || "").trim();
+      const body  = ($("#newsBody").value || "").trim();
+      const date  = ($("#newsDate").value || "").trim();
+      const st = $("#publishStatus");
+      st.className = "status show";
+
+      if(!title || !body || !date){
+        st.classList.add("bad");
+        st.textContent = "Completá Título, Cuerpo y Fecha.";
+        toast("Faltan campos");
+        return;
+      }
+
+      addNews({
+        id: cryptoRandomId(),
+        title,
+        body,
+        date,
+        createdAt: new Date().toISOString()
+      });
+
+      st.classList.add("ok");
+      st.textContent = "Noticia publicada y guardada en este navegador.";
+      toast("Novedad publicada ✨");
+
+      $("#newsTitle").value = "";
+      $("#newsBody").value = "";
+      $("#newsTitle").focus();
+    }
+
+    function cryptoRandomId(){
+      const a = new Uint32Array(2);
+      (crypto?.getRandomValues ? crypto.getRandomValues(a) : (a[0]=Math.random()*1e9,a[1]=Math.random()*1e9));
+      return Array.from(a).map(n=>n.toString(16)).join("-");
+    }
+
+    function showOverlay(el){ el.classList.add("show"); document.body.style.overflow = "hidden"; }
+    function hideOverlay(el){
+      el.classList.remove("show");
+      const anyOpen = $$(".overlay").some(o => o.classList.contains("show"));
+      if(!anyOpen) document.body.style.overflow = "";
+    }
+
+    function shouldShowCafecito(){
+      if(localStorage.getItem(LS_KEYS.cafecitoHidden) === "1") return false;
+      const snoozeUntil = Number(localStorage.getItem(LS_KEYS.cafecitoSnoozeUntil) || "0");
+      if(snoozeUntil && Date.now() < snoozeUntil) return false;
+      return true;
+    }
+    function syncCafecito(){
+      const el = $("#cafecito");
+      el.style.display = shouldShowCafecito() ? "block" : "none";
+    }
+
+    function bindEvents(){
+      $("#closeAppBtn").addEventListener("click", closeApp);
+      $("#appOverlay").addEventListener("click", (e)=>{ if(e.target === $("#appOverlay")) closeApp(); });
+
+      $("#openNewTabBtn").addEventListener("click", ()=>{
+        if(currentAppUrl) window.open(currentAppUrl, "_blank", "noopener,noreferrer");
+      });
+
+      $("#adminBtn").addEventListener("click", ()=>{ renderAdmin(); showOverlay($("#adminOverlay")); });
+      $("#closeAdminBtn").addEventListener("click", ()=> hideOverlay($("#adminOverlay")));
+      $("#adminOverlay").addEventListener("click", (e)=>{ if(e.target === $("#adminOverlay")) hideOverlay($("#adminOverlay")); });
+
+      $("#helpBtn").addEventListener("click", ()=> showOverlay($("#helpOverlay")));
+      $("#closeHelpBtn").addEventListener("click", ()=> hideOverlay($("#helpOverlay")));
+      $("#helpOverlay").addEventListener("click", (e)=>{ if(e.target === $("#helpOverlay")) hideOverlay($("#helpOverlay")); });
+
+      const input = $("#appSearch");
+      input.addEventListener("input", ()=> renderApps(input.value));
+      $("#clearSearchBtn").addEventListener("click", ()=>{ input.value = ""; renderApps(""); input.focus(); });
+
+      document.addEventListener("keydown", (e)=>{
+        if(e.key === "Escape"){
+          if($("#appOverlay").classList.contains("show")) return closeApp();
+          if($("#adminOverlay").classList.contains("show")) return hideOverlay($("#adminOverlay"));
+          if($("#helpOverlay").classList.contains("show")) return hideOverlay($("#helpOverlay"));
+        }
+
+        const k = e.key.toLowerCase();
+        const cmd = e.metaKey || e.ctrlKey;
+
+        if(cmd && k === "k"){ e.preventDefault(); $("#appSearch").focus(); toast("Buscar herramientas"); }
+        if(cmd && e.shiftKey && k === "b"){ e.preventDefault(); renderAdmin(); showOverlay($("#adminOverlay")); toast("Admin"); }
+      });
+
+      $("#cafecitoClose").addEventListener("click", ()=>{
+        localStorage.setItem(LS_KEYS.cafecitoHidden, "1");
+        syncCafecito();
+        toast("Listo, lo oculto.");
+      });
+      $("#cafecitoLater").addEventListener("click", ()=>{
+        localStorage.setItem(LS_KEYS.cafecitoSnoozeUntil, String(Date.now() + 24*60*60*1000));
+        syncCafecito();
+        toast("Te lo muestro más tarde 🙌");
+      });
+    }
+
+    function boot(){ renderNews(); renderApps(""); syncCafecito(); lucide.createIcons(); }
+
+    bindEvents();
+    boot();
+  </script>
+</body>
+</html>
