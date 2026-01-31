@@ -787,10 +787,175 @@
     z-index:0;
   }
 
+
+  /* Splash / Loading Screen */
+  .splash{
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: grid;
+    place-items: center;
+    background:
+      radial-gradient(1200px 600px at 15% 10%, rgba(77,48,105,.22), transparent 60%),
+      radial-gradient(1100px 700px at 85% 15%, rgba(190,127,79,.24), transparent 55%),
+      radial-gradient(1000px 600px at 50% 100%, rgba(36,73,110,.18), transparent 60%),
+      var(--cream);
+    overflow: hidden;
+  }
+  .splash::before{
+    content:"";
+    position:absolute;
+    inset:-40%;
+    background: conic-gradient(from 180deg at 50% 50%,
+      rgba(255,255,255,0),
+      rgba(255,255,255,.18),
+      rgba(255,255,255,0),
+      rgba(255,255,255,.10),
+      rgba(255,255,255,0)
+    );
+    filter: blur(70px);
+    opacity:.55;
+    animation: spin 18s linear infinite;
+  }
+  .splash-card{
+    position: relative;
+    width: min(520px, calc(100vw - 40px));
+    border-radius: 28px;
+    background: linear-gradient(180deg, rgba(255,255,255,.70), rgba(255,255,255,.48));
+    border: 1px solid rgba(36,73,110,.16);
+    box-shadow: 0 26px 80px rgba(0,0,0,.18);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    padding: 22px 20px 18px;
+    overflow:hidden;
+  }
+  .splash-card::after{
+    content:"";
+    position:absolute;
+    inset:-60%;
+    background: radial-gradient(circle at 30% 20%, rgba(255,255,255,.26), transparent 55%);
+    pointer-events:none;
+  }
+  .splash-top{
+    position: relative;
+    display:flex;
+    align-items:center;
+    gap: 12px;
+  }
+  .splash-logo{
+    width:54px; height:54px;
+    border-radius: 18px;
+    background: linear-gradient(135deg, rgba(36,73,110,.95), rgba(77,48,105,.95));
+    box-shadow: 0 16px 40px rgba(0,0,0,.14);
+    display:grid;
+    place-items:center;
+    color:#fff;
+    overflow:hidden;
+    position:relative;
+    flex: 0 0 auto;
+  }
+  .splash-logo::after{
+    content:"";
+    position:absolute;
+    inset:-60%;
+    background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.38), transparent 45%);
+    transform: rotate(18deg);
+  }
+  .splash-title{
+    position: relative;
+    margin:0;
+    font-family: "League Spartan", var(--font);
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    font-weight: 900;
+    color: rgba(19,34,53,.86);
+    font-size: 16px;
+    line-height: 1.05;
+  }
+  .splash-sub{
+    position: relative;
+    margin: 6px 0 0;
+    color: rgba(19,34,53,.72);
+    font-size: 13.5px;
+    line-height: 1.35;
+  }
+  .splash-bar{
+    position: relative;
+    margin-top: 16px;
+    height: 10px;
+    border-radius: 999px;
+    background: rgba(36,73,110,.10);
+    border: 1px solid rgba(36,73,110,.14);
+    overflow:hidden;
+  }
+  .splash-bar > span{
+    display:block;
+    height:100%;
+    width: 45%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, rgba(77,48,105,.90), rgba(36,73,110,.90), rgba(190,127,79,.85));
+    animation: splashMove 1.1s ease-in-out infinite;
+    filter: saturate(1.05);
+  }
+  @keyframes splashMove{
+    0%{ transform: translateX(-120%); width: 35%; opacity:.80; }
+    50%{ transform: translateX(10%); width: 60%; opacity:1; }
+    100%{ transform: translateX(220%); width: 35%; opacity:.80; }
+  }
+  .splash-dots{
+    position: relative;
+    margin-top: 12px;
+    display:flex;
+    gap: 6px;
+    align-items:center;
+    color: rgba(19,34,53,.62);
+    font-size: 12px;
+  }
+  .dot{
+    width:8px; height:8px;
+    border-radius: 999px;
+    background: rgba(36,73,110,.22);
+    animation: dot 1.1s ease-in-out infinite;
+  }
+  .dot:nth-child(2){ animation-delay: .12s; }
+  .dot:nth-child(3){ animation-delay: .24s; }
+  @keyframes dot{
+    0%, 100%{ transform: translateY(0); opacity:.55; }
+    45%{ transform: translateY(-4px); opacity:1; }
+  }
+  .splash.hide{
+    opacity: 0;
+    pointer-events:none;
+    transition: opacity .28s ease;
+  }
+  @media (prefers-reduced-motion: reduce){
+    .splash::before, .splash-bar > span, .dot{ animation:none !important; }
+    .splash.hide{ transition:none !important; }
+  }
+
 </style>
 </head>
 
 <body>
+
+  <!-- Splash / Loading -->
+  <div class="splash" id="splash" aria-label="Cargando plataforma">
+    <div class="splash-card">
+      <div class="splash-top">
+        <div class="splash-logo" aria-hidden="true"><i data-lucide="sparkles"></i></div>
+        <div>
+          <h2 class="splash-title">DOCENTES BROWN</h2>
+          <p class="splash-sub">Plataforma educativa.</p>
+        </div>
+      </div>
+      <div class="splash-bar" aria-hidden="true"><span></span></div>
+      <div class="splash-dots" aria-hidden="true">
+        <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+        <span style="margin-left:6px;">Cargando…</span>
+      </div>
+    </div>
+  </div>
+
   <div class="bg-noise"></div>
   <div class="bg-sheen" aria-hidden="true"></div>
 
@@ -1574,7 +1739,34 @@ $("#openNewTabBtn").addEventListener("click", ()=>{
       });
     }
 
-    async function boot(){ await renderNews(); renderApps(""); syncCafecito(); if (window.lucide?.createIcons) lucide.createIcons(); registerSW(); }
+    
+    function hideSplash(){
+      const s = document.getElementById("splash");
+      if(!s) return;
+      s.classList.add("hide");
+      // remove from DOM after fade to free GPU
+      setTimeout(()=>{ try{ s.remove(); }catch(e){} }, 500);
+    }
+
+    async function boot(){
+      const splashMinMs = 650;
+      const t0 = performance.now();
+
+      await renderNews();
+      renderApps("");
+      syncCafecito();
+
+      // Wait for lucide to be ready and render icons once
+      if (window.lucide && typeof lucide.createIcons === "function") {
+        lucide.createIcons();
+      }
+
+      registerSW();
+
+      const elapsed = performance.now() - t0;
+      const wait = Math.max(0, splashMinMs - elapsed);
+      setTimeout(hideSplash, wait);
+    }
 
     function start(){
       bindEvents();
