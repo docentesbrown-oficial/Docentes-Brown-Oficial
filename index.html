@@ -1465,6 +1465,13 @@
             toast("Abriendo Meet…");
             return;
           }
+
+          // Buscador de Concursos: abrir directo (sin modal/iframe)
+          if(url.includes("Buscador.Concursos")){
+            window.location.href = url;
+            return;
+          }
+
           openApp(card.dataset.appName, url, card.dataset.appIcon);
         });
 card.addEventListener("keydown", (e)=>{
@@ -1472,11 +1479,18 @@ card.addEventListener("keydown", (e)=>{
             e.preventDefault();
             const url = card.dataset.appUrl || "";
             if(url.includes("meet.google.com")){
-              window.open(url, "_blank", "noopener,noreferrer");
-              toast("Abriendo Meet…");
-              return;
-            }
-            openApp(card.dataset.appName, url, card.dataset.appIcon);
+            window.open(url, "_blank", "noopener,noreferrer");
+            toast("Abriendo Meet…");
+            return;
+          }
+
+          // Buscador de Concursos: abrir directo (sin modal/iframe)
+          if(url.includes("Buscador.Concursos")){
+            window.location.href = url;
+            return;
+          }
+
+          openApp(card.dataset.appName, url, card.dataset.appIcon);
 }
         });
 
